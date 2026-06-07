@@ -122,6 +122,24 @@ Full-screen overlay before wheel. Only RCH has data. Flow: division click → st
 
 ---
 
+## Live Sheet Data — /api/sheets
+
+**Serverless proxy**: `api/sheets.js` — replaces direct gviz CSV URL in both KDIndicatorDetail and NCDDetailPage.
+
+- **Sheet**: `1vsCSdPZpBK5SQw9gppRLEEKDLhj19DHk` · Sheet1 · M1-M9 (RCH/HMIS monthly data, 25 districts)
+- **Endpoint**: `GET /api/sheets?code={hmisCode}&cat={hmisCat}` — filters server-side, returns JSON
+- **Auth**: Uses `GOOGLE_SHEETS_API_KEY` Vercel env var (Sheets API v4). Falls back to public gviz URL if key not set.
+- **Cache**: `s-maxage=300, stale-while-revalidate=60` (5-min CDN cache)
+- **To activate API v4**: Go to Vercel → Project v6appdashboard → Settings → Environment Variables → update `GOOGLE_SHEETS_API_KEY` with real key (AIza...) from Google Cloud Console → Redeploy
+
+**How to get a Google API key**:
+1. Go to console.cloud.google.com → Create project
+2. Enable Google Sheets API
+3. Credentials → Create API key → Restrict to "Google Sheets API"
+4. Paste key into Vercel env var `GOOGLE_SHEETS_API_KEY`
+
+---
+
 ## KD Data Schema
 
 ```js
