@@ -1,0 +1,409 @@
+/* ═══════════════════════════════════════════════════════════════════
+   hero.css — Aurora background + dark-glass navbar
+   Palette: near-black (#05060f) + purple aurora + white text
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Page root ───────────────────────────────────────────────────── */
+.home-root {
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: transparent;
+}
+
+/* ── SVG turbulence aurora (AuroraBackground.jsx) ───────────────── */
+.aurora-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: transparent;
+}
+.aurora-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Edge vignette — keeps the periphery dark so cards pop */
+.aurora-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 88% 82% at 50% 50%,
+    transparent  35%,
+    rgba(5,3,12,0.25) 68%,
+    rgba(5,3,12,0.60) 100%
+  );
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-svg { display: none; }
+}
+
+/* ── Decorative floating icons layer ─────────────────────────────── */
+.decorative-icons-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px)  rotate(var(--rot, 0deg)); }
+  50%       { transform: translateY(-8px) rotate(var(--rot, 0deg)); }
+}
+.decorative-icon { position: absolute; pointer-events: none; animation: floatSlow 8s ease-in-out infinite; }
+.decorative-icon:nth-child(2) { animation-delay: -2s; }
+.decorative-icon:nth-child(3) { animation-delay: -4s; }
+.decorative-icon:nth-child(4) { animation-delay: -6s; }
+.decorative-icon:nth-child(5) { animation-delay: -1s; }
+.decorative-icon:nth-child(6) { animation-delay: -3s; }
+.decorative-icon:nth-child(7) { animation-delay: -5s; }
+.decorative-icon:nth-child(8) { animation-delay: -7s; }
+@media (prefers-reduced-motion: reduce) { .decorative-icon { animation: none; } }
+
+/* ── Content stack ───────────────────────────────────────────────── */
+.home-content {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   NAVBAR — dark frosted glass floating above the aurora
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Header strip — fully transparent so aurora bleeds through */
+.home-header {
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+  padding: 10px 0;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  border-bottom: none;
+}
+.home-header::before { display: none; }
+.header-waves        { display: none; }
+
+/* Glass pill wrapper */
+.home-header-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+}
+
+/* ── The glass navbar pill ────────────────────────────────────────── */
+.glass-navbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+
+  background: rgba(8, 5, 20, 0.55);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+
+  border-radius: 16px;
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 0 0 1px rgba(59,130,246,0.08),
+    0 8px 32px rgba(0,0,0,0.55),
+    0 2px 8px  rgba(0,0,0,0.40),
+    0 0 60px   rgba(59,130,246,0.12);
+
+  padding: 10px 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-navbar { background: rgba(8,5,20,0.95); }
+}
+
+/* Blue shimmer sweep */
+.glass-navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    108deg,
+    transparent       0%,
+    transparent       32%,
+    rgba(147,197,253,0.07) 46%,
+    rgba(59,130,246, 0.04) 54%,
+    transparent       68%,
+    transparent       100%
+  );
+  transform: translateX(-120%);
+  animation: navShimmer 5s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
+}
+@keyframes navShimmer {
+  0%   { transform: translateX(-120%); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translateX(120%);  opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .glass-navbar::before { animation: none; } }
+
+/* ── Brand block ─────────────────────────────────────────────────── */
+.home-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.home-state-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.4px;
+  line-height: 1;
+  text-shadow: 0 1px 12px rgba(139,92,246,0.35);
+}
+.home-state-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.40);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.home-data-ref {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  color: #93c5fd;
+  opacity: 0.80;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+/* ── Summary stat strip ──────────────────────────────────────────── */
+.home-summary {
+  display: flex;
+  align-items: stretch;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 50px;
+  overflow: hidden;
+  flex-shrink: 0;
+  justify-self: center;
+}
+
+.hs-pill {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  padding: 7px 14px;
+  position: relative;
+  transition: filter 0.15s ease;
+}
+.hs-pill:hover { filter: brightness(1.15); }
+
+.hs-pill + .hs-pill::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+.hs-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1;
+}
+.hs-lbl {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  line-height: 1.2;
+}
+
+.hs-total  { background: rgba(59,130,246,0.14); }
+.hs-total  .hs-val { color: #ffffff; }
+.hs-total  .hs-lbl { color: rgba(255,255,255,0.55); }
+
+.hs-red    { background: rgba(239,68,68,0.12); }
+.hs-red    .hs-val { color: #fca5a5; }
+.hs-red    .hs-lbl { color: #fca5a5; opacity: 0.80; }
+
+.hs-yellow { background: rgba(234,179,8,0.10); }
+.hs-yellow .hs-val { color: #fde68a; }
+.hs-yellow .hs-lbl { color: #fde68a; opacity: 0.80; }
+
+.hs-green  { background: rgba(34,197,94,0.10); }
+.hs-green  .hs-val { color: #86efac; }
+.hs-green  .hs-lbl { color: #86efac; opacity: 0.80; }
+
+/* ── Legend + search (right column) ─────────────────────────────── */
+.home-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+}
+.home-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-end;
+}
+.hl-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.40);
+  white-space: nowrap;
+}
+.hl-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.hl-red    { background: #fca5a5; box-shadow: 0 0 4px #fca5a5; }
+.hl-yellow { background: #fde68a; box-shadow: 0 0 4px #fde68a; }
+.hl-green  { background: #86efac; box-shadow: 0 0 4px #86efac; }
+
+/* ── Grid area ───────────────────────────────────────────────────── */
+.home-grid {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 6px 14px 16px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+}
+
+.grid-section { padding: 16px 28px; }
+
+/* ════════════════════════════════════════════════════════════════════
+   LIGHT MODE OVERRIDES — hero.css  (orange accent, V2 palette)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Aurora → clean neutral dot-grid background */
+[data-theme="light"] .aurora-wrap {
+  background-color: #F5F5F5;
+  background-image: radial-gradient(circle, rgba(26,22,16,0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+[data-theme="light"] .aurora-wrap::after { background: none; }
+[data-theme="light"] .aurora-svg         { display: none; }
+
+/* Smooth theme transition on page containers */
+[data-theme="light"] .home-root,
+[data-theme="light"] .flip-stage,
+[data-theme="light"] .flip-page { background: transparent; }
+
+/* Glass navbar → white frosted glass in light mode */
+[data-theme="light"] .glass-navbar {
+  background: rgba(255,255,255,0.88);
+  border-color: rgba(255,85,0,0.35);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    0 4px 24px rgba(26,22,16,0.10),
+    0 1px 4px  rgba(26,22,16,0.06);
+}
+[data-theme="light"] .glass-navbar::before { display: none; }
+
+/* Brand text — dark on white glass */
+[data-theme="light"] .home-state-name { color: #1A1610; text-shadow: none; }
+[data-theme="light"] .home-state-sub  { color: rgba(26,22,16,0.50); }
+[data-theme="light"] .home-data-ref   { color: #FF5500; }
+[data-theme="light"] .home-back-btn   { color: #1A1610; }
+[data-theme="light"] .home-back-btn:hover { background: rgba(26,22,16,0.07); }
+
+/* Summary pill strip on white glass navbar */
+[data-theme="light"] .home-summary {
+  background: rgba(26,22,16,0.05);
+  border-color: rgba(26,22,16,0.10);
+}
+[data-theme="light"] .hs-pill + .hs-pill::before { background: rgba(26,22,16,0.08); }
+[data-theme="light"] .hs-total           { background: rgba(255,85,0,0.10); }
+[data-theme="light"] .hs-total .hs-val   { color: #FF5500; }
+[data-theme="light"] .hs-total .hs-lbl   { color: rgba(26,22,16,0.55); }
+[data-theme="light"] .hs-red    .hs-val  { color: #DC2626; }
+[data-theme="light"] .hs-red    .hs-lbl  { color: rgba(26,22,16,0.55); opacity: 1; }
+[data-theme="light"] .hs-yellow .hs-val  { color: #D97706; }
+[data-theme="light"] .hs-yellow .hs-lbl  { color: rgba(26,22,16,0.55); opacity: 1; }
+[data-theme="light"] .hs-green  .hs-val  { color: #059669; }
+[data-theme="light"] .hs-green  .hs-lbl  { color: rgba(26,22,16,0.55); opacity: 1; }
+
+/* Legend dots on white glass navbar */
+[data-theme="light"] .hl-item   { color: rgba(26,22,16,0.45); }
+[data-theme="light"] .hl-red    { background: #DC2626; box-shadow: none; }
+[data-theme="light"] .hl-yellow { background: #D97706; box-shadow: none; }
+[data-theme="light"] .hl-green  { background: #059669; box-shadow: none; }
+
+/* ── Status filter pills (active / dim states) ───────────────────── */
+.hs-pill--clickable { cursor: pointer; }
+.hs-total           { cursor: pointer; }
+
+.hs-pill--active.hs-red {
+  background: rgba(239,68,68,0.28);
+  box-shadow: inset 0 0 0 1.5px rgba(252,165,165,0.70), 0 0 14px rgba(239,68,68,0.28);
+}
+.hs-pill--active.hs-yellow {
+  background: rgba(234,179,8,0.26);
+  box-shadow: inset 0 0 0 1.5px rgba(253,230,138,0.70), 0 0 14px rgba(234,179,8,0.26);
+}
+.hs-pill--active.hs-green {
+  background: rgba(34,197,94,0.26);
+  box-shadow: inset 0 0 0 1.5px rgba(134,239,172,0.70), 0 0 14px rgba(34,197,94,0.26);
+}
+
+.hs-pill--dim {
+  opacity: 0.32;
+  transition: opacity 0.18s ease, filter 0.18s ease;
+}
+.hs-pill--dim:hover { opacity: 0.60; }
+
+/* Empty state when a division has no programmes matching active filter */
+.lp-progs-none {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.22);
+  text-align: center;
+  padding: 18px 0 10px;
+  letter-spacing: 0.6px;
+}
+[data-theme="light"] .lp-progs-none { color: rgba(26,22,16,0.28); }

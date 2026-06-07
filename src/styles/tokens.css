@@ -1,0 +1,157 @@
+/* ─────────────────────────────────────────────────────────────────
+   tokens.css — McKinsey-inspired dark system
+   Primary accent: McKinsey teal/blue (#00b5cc)
+   Background: Deep navy ecosystem (#051c2c)
+   Text: White hierarchy
+   ───────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Primary accent — McKinsey teal/blue ───────────────────────── */
+  --org:        #00b5cc;
+  --org2:       #00cce5;
+  --org3:       #0097ab;
+  --org-dim:    rgba(0,181,204,0.15);
+  --org-glow:   rgba(0,181,204,0.25);
+  --org-soft:   rgba(0,181,204,0.08);
+
+  /* ── Secondary — deeper teal ────────────────────────────────────── */
+  --blue:       #00b5cc;
+  --blue2:      #0097ab;
+  --blue-dim:   rgba(0,181,204,0.12);
+  --blue-glow:  rgba(0,181,204,0.20);
+
+  /* ── Background ecosystem — deep navy ──────────────────────────── */
+  --bg:         #051c2c;        /* page root                          */
+  --bg2:        #0a2236;        /* cards, panels                      */
+  --bg3:        #0f2a40;        /* elevated surfaces                  */
+  --bg4:        #163348;        /* hover / active states              */
+  --bg5:        #1d3d54;        /* highest elevation                  */
+
+  /* ── Glass layers — dark glass ─────────────────────────────────── */
+  --w1:  rgba(10,34,54,0.85);
+  --w2:  rgba(10,34,54,0.65);
+  --w3:  rgba(10,34,54,0.45);
+  --w4:  rgba(15,42,64,0.92);
+
+  /* ── Text — white hierarchy ─────────────────────────────────────── */
+  --ink:        #ffffff;
+  --ink-mid:    #e0eaf2;
+  --ink-light:  #b8ccd8;
+  --ink-faint:  #6b8a9e;
+
+  /* ── Legacy aliases — remapped to dark ─────────────────────────── */
+  --navy-dark:    #ffffff;
+  --navy-mid:     #b8ccd8;
+  --navy:         #e0eaf2;
+  --off-white:    #0a2236;
+  --cloud-gray:   #163348;
+  --teal-dark:    #00b5cc;
+  --teal-mid:     #00cce5;
+  --teal-light:   #40ddf0;
+  --teal-pale:    rgba(0,181,204,0.15);
+  --ocean-light:  rgba(0,181,204,0.08);
+  --ocean-mid:    #00b5cc;
+  --ocean-deep:   #0097ab;
+  --ocean-glass:  rgba(0,181,204,0.06);
+  --yellow:       #F5C518;
+  --yellow-hover: #E0B000;
+  --gold:         #00b5cc;
+  --gold-mid:     #00cce5;
+
+  /* ── Status — reworked for dark bg ─────────────────────────────── */
+  --red-dot:  #ff5a5a;
+  --red-bdr:  rgba(255,90,90,0.30);
+  --red-txt:  #ff8080;
+  --red-bg:   rgba(255,60,60,0.12);
+
+  --yel-dot:  #f5c518;
+  --yel-bdr:  rgba(245,197,24,0.30);
+  --yel-txt:  #f5c518;
+  --yel-bg:   rgba(245,197,24,0.12);
+
+  --grn-dot:  #00e5a0;
+  --grn-bdr:  rgba(0,229,160,0.30);
+  --grn-txt:  #00e5a0;
+  --grn-bg:   rgba(0,229,160,0.12);
+
+  /* ── Shadows — dark-appropriate ─────────────────────────────────── */
+  --sh:     0 2px 8px rgba(0,0,0,0.30);
+  --shm:    0 4px 20px rgba(0,0,0,0.40);
+  --sh-org: 0 4px 24px rgba(0,181,204,0.22);
+  --sh-blue:0 4px 24px rgba(0,181,204,0.18);
+
+  /* ── Radii ───────────────────────────────────────────────────────── */
+  --r:  10px;
+  --rm: 10px;
+  --rl: 14px;
+}
+
+/* ── Light mode — V2 warm-cream + orange palette ─────────────────── */
+[data-theme="light"] {
+  /* Primary accent → V2 orange */
+  --org:        #FF5500;
+  --org2:       #FF7733;
+  --org3:       #C04000;
+  --org-dim:    rgba(255,85,0,0.12);
+  --org-glow:   rgba(255,85,0,0.22);
+  --org-soft:   rgba(255,85,0,0.07);
+
+  /* Blue alias → remapped to orange in light mode */
+  --blue:       #FF5500;
+  --blue2:      #FF7733;
+  --blue-dim:   rgba(255,85,0,0.10);
+  --blue-glow:  rgba(255,85,0,0.18);
+
+  --bg:         #F5F5F5;
+  --bg2:        #EFEFEF;
+  --bg3:        #E8E8E8;
+  --bg4:        #E2E2E2;
+  --bg5:        #D8D8D8;
+
+  --w1:  rgba(255,255,255,0.88);
+  --w2:  rgba(255,255,255,0.65);
+  --w3:  rgba(255,255,255,0.45);
+  --w4:  rgba(255,255,255,0.96);
+
+  --ink:        #1A1610;
+  --ink-mid:    #3A342C;
+  --ink-light:  #7A7060;
+  --ink-faint:  #9A8F82;
+
+  --navy-dark:    #1A1610;
+  --navy-mid:     #3A342C;
+  --navy:         #3A342C;
+  --off-white:    #FAFAFA;
+  --cloud-gray:   #E8E8E8;
+
+  --teal-dark:    #C04000;
+  --teal-mid:     #FF5500;
+  --teal-light:   #FF7733;
+  --teal-pale:    rgba(255,85,0,0.15);
+  --ocean-light:  rgba(255,85,0,0.07);
+  --ocean-mid:    #FF5500;
+  --ocean-deep:   #C04000;
+  --ocean-glass:  rgba(255,85,0,0.05);
+  --gold:         #FF5500;
+  --gold-mid:     #FF7733;
+
+  --red-dot:  #DC2626;
+  --red-bdr:  rgba(220,38,38,0.28);
+  --red-txt:  #C53030;
+  --red-bg:   rgba(220,38,38,0.07);
+
+  --yel-dot:  #D97706;
+  --yel-bdr:  rgba(217,119,6,0.28);
+  --yel-txt:  #B45309;
+  --yel-bg:   rgba(217,119,6,0.08);
+
+  --grn-dot:  #059669;
+  --grn-bdr:  rgba(5,150,105,0.28);
+  --grn-txt:  #047857;
+  --grn-bg:   rgba(5,150,105,0.07);
+
+  --sh:     0 2px 8px rgba(26,22,16,0.08);
+  --shm:    0 4px 20px rgba(26,22,16,0.12);
+  --sh-org: 0 4px 24px rgba(255,85,0,0.18);
+  --sh-blue:0 4px 24px rgba(255,85,0,0.14);
+}

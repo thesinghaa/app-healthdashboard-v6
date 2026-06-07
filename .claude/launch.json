@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pif-v5",
+      "runtimeExecutable": "/bin/sh",
+      "runtimeArgs": ["-c", "cd /Users/thesinghaa/PIFHealthDashboard-v5 && npx vite --port 3002 --force"],
+      "port": 3002
+    }
+  ]
+}

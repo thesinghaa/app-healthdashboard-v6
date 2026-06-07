@@ -1,0 +1,15 @@
+/* ─────────────────────────────────────────────────────────────────
+   index.css — Style entry point
+   Import order matters: tokens first, then reset, then sections.
+   To change a specific part of the UI, edit only that section file.
+   ───────────────────────────────────────────────────────────────── */
+
+@import './tokens.css';    /* colour palette, shadows, radii      */
+@import './reset.css';     /* base reset + body + scrollbar       */
+@import './hero.css';      /* landing page / Section 1            */
+@import './grid.css';      /* programme grid / Section 2          */
+@import './division.css';  /* division expand overlay             */
+@import './detail.css';    /* programme detail page               */
+@import './utils.css';     /* responsive breakpoints              */
+@import './ncd.css';       /* NCD detail page                     */
+@import './landing.css';   /* cinema reel landing page            */
