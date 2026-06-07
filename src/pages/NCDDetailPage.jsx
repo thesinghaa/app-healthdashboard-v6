@@ -90,7 +90,7 @@ const KEY_ITEMS = {
 
 /* ── Fetch sheet — calls /api/sheets serverless proxy ────────────── */
 async function fetchSheetData() {
-  const res = await fetch(SHEETS_API);
+  const res = await fetch(SHEETS_API, { cache: 'no-store' });
   if (!res.ok) throw new Error(`/api/sheets HTTP ${res.status}`);
   const json = await res.json();
   if (json.error) throw new Error(json.error);

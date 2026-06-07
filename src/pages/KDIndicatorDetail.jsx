@@ -78,7 +78,7 @@ async function fetchHMIS(hmisCode, hmisCat) {
   const params = new URLSearchParams();
   if (hmisCode) params.set('code', hmisCode);
   if (hmisCat)  params.set('cat',  hmisCat);
-  const res = await fetch(`${SHEETS_API}?${params}`);
+  const res = await fetch(`${SHEETS_API}?${params}`, { cache: 'no-store' });
   if (!res.ok) throw new Error(`/api/sheets HTTP ${res.status}`);
   const json = await res.json();
   if (json.error) throw new Error(json.error);

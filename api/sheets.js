@@ -38,7 +38,7 @@ function parseCSV(text) {
 }
 
 async function fetchViaGviz() {
-  const res = await fetch(GVIZ_URL);
+  const res = await fetch(GVIZ_URL, { cache: 'no-store' });
   if (!res.ok) throw new Error(`gviz HTTP ${res.status}`);
   const text   = await res.text();
   const rows   = parseCSV(text);
@@ -60,7 +60,7 @@ async function fetchViaGviz() {
 
 async function fetchViaAPIv4(apiKey) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_TAB}?key=${apiKey}&majorDimension=ROWS`;
-  const res = await fetch(url);
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err?.error?.message || `Sheets API HTTP ${res.status}`);
@@ -116,8 +116,8 @@ function buildRows({ rows, COL, districts }, codeFilter, catFilter) {
 }
 
 export default async function handler(req, res) {
-  /* 5-minute CDN cache, stale-while-revalidate 60 s */
-  res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
+  /* No caching — always serve fresh sheet data */
+  res.setHeader('Cache-Control', 'no-store');
   res.setHeader('Access-Control-Allow-Origin', '*');
 
   const { code, cat } = req.query;
