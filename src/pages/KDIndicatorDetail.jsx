@@ -34,9 +34,8 @@ const DIVISION_SCALES = {
   hrh:  [[0,'#FEE2E2'],[0.33,'#FCA5A5'],[0.66,'#EF4444'],[1,'#7F1D1D']],
 };
 
-/* ── Sheet config ────────────────────────────────────────────────── */
-const SHEET_ID = '1vsCSdPZpBK5SQw9gppRLEEKDLhj19DHk';
-const CSV_URL  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+/* ── Sheet config — uses /api/sheets serverless proxy (Sheets API v4) ── */
+const SHEETS_API = '/api/sheets';
 
 const MONTH_ORDER = ['April','May','June','July','August','September','October','November','December','January','February','March'];
 const MONTH_SHORT = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
@@ -74,64 +73,23 @@ function fmt(n) {
   return Number(n).toLocaleString();
 }
 
-/* ── CSV parser ──────────────────────────────────────────────────── */
-function parseCSV(text) {
-  return text.trim().split('\n').map(line => {
-    const cols = []; let cur = '', inQ = false;
-    for (const ch of line) {
-      if (ch === '"')              { inQ = !inQ; }
-      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-      else                         { cur += ch; }
-    }
-    cols.push(cur.trim());
-    return cols;
-  });
-}
-
-/* ── HMIS fetch ──────────────────────────────────────────────────── */
+/* ── HMIS fetch — calls /api/sheets serverless proxy ─────────────── */
 async function fetchHMIS(hmisCode, hmisCat) {
-  const res = await fetch(CSV_URL);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const text = await res.text();
-  const rows = parseCSV(text);
-  if (rows.length < 2) return [];
-
-  const headers = rows[0].map(h => h.replace(/"/g, '').trim());
-  const COL = {
-    year:  headers.findIndex(h => /^year$/i.test(h)),
-    month: headers.findIndex(h => /^month$/i.test(h)),
-    cat:   headers.findIndex(h => /^category$/i.test(h)),
-    code:  headers.findIndex(h => /data item code/i.test(h)),
-  };
-  const distCols = {};
-  DISTRICTS.forEach(d => {
-    const idx = headers.findIndex(h => h.toLowerCase() === d.toLowerCase());
-    if (idx >= 0) distCols[d] = idx;
-  });
-
-  const out = [];
-  for (let i = 1; i < rows.length; i++) {
-    const r = rows[i];
-    if (r.length < 6) continue;
-    const catMatch = r[COL.cat]?.replace(/"/g, '').match(/^(M\d+)/);
-    if (!catMatch) continue;
-    if (hmisCat && catMatch[1] !== hmisCat) continue;
-    const code = r[COL.code]?.replace(/"/g, '').trim().replace(/\.$/, '');
-    if (code !== hmisCode) continue;
-
-    const distTotals = {};
-    DISTRICTS.forEach(d => {
-      const raw = r[distCols[d]]?.replace(/"/g, '').replace(/,/g, '').trim();
-      distTotals[d] = parseFloat(raw) || 0;
-    });
-    const stateTotal = Object.values(distTotals).reduce((s, v) => s + v, 0);
-    out.push({
-      year:  r[COL.year]?.replace(/"/g, '').trim(),
-      month: r[COL.month]?.replace(/"/g, '').trim(),
-      code, stateTotal, distTotals,
-    });
-  }
-  return out;
+  const params = new URLSearchParams();
+  if (hmisCode) params.set('code', hmisCode);
+  if (hmisCat)  params.set('cat',  hmisCat);
+  const res = await fetch(`${SHEETS_API}?${params}`);
+  if (!res.ok) throw new Error(`/api/sheets HTTP ${res.status}`);
+  const json = await res.json();
+  if (json.error) throw new Error(json.error);
+  /* Normalize to the shape the rest of the file expects */
+  return (json.rows || []).map(r => ({
+    year:       r.year,
+    month:      r.month,
+    code:       r.code,
+    stateTotal: r.stateTotal,
+    distTotals: r.distTotals,
+  }));
 }
 
 /* ── NFHS palette ────────────────────────────────────────────────── */

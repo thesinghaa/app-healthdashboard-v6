@@ -7,10 +7,9 @@ import {
 import '../styles/ncd.css';
 import KDDetailPage from './KDDetailPage';
 
-/* ── Sheet config ────────────────────────────────────────────────── */
-const SHEET_ID       = '1vsCSdPZpBK5SQw9gppRLEEKDLhj19DHk';
-const DATA_SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit?usp=sharing`;
-const CSV_URL        = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+/* ── Sheet config — uses /api/sheets serverless proxy (Sheets API v4) ── */
+const SHEETS_API     = '/api/sheets';
+const DATA_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1vsCSdPZpBK5SQw9gppRLEEKDLhj19DHk/edit';
 
 const DISTRICTS = [
   'Changlang','Dibang Valley','East Kameng','Anjaw','East Siang',
@@ -89,67 +88,19 @@ const KEY_ITEMS = {
   ],
 };
 
-/* ── CSV parser ──────────────────────────────────────────────────── */
-function parseCSV(text) {
-  return text.trim().split('\n').map(line => {
-    const cols = []; let cur = '', inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') { inQ = !inQ; }
-      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-      else { cur += ch; }
-    }
-    cols.push(cur.trim());
-    return cols;
-  });
-}
-
-/* ── Fetch sheet ─────────────────────────────────────────────────── */
+/* ── Fetch sheet — calls /api/sheets serverless proxy ────────────── */
 async function fetchSheetData() {
-  const res = await fetch(CSV_URL);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const text = await res.text();
-  const rows = parseCSV(text);
-  if (rows.length < 2) throw new Error('Empty sheet');
-
-  const headers = rows[0].map(h => h.replace(/"/g, '').trim());
-  const distCols = {};
-  DISTRICTS.forEach(d => {
-    const idx = headers.findIndex(h => h.toLowerCase() === d.toLowerCase());
-    if (idx >= 0) distCols[d] = idx;
-  });
-
-  const COL = {
-    year:  headers.findIndex(h => /^year$/i.test(h)),
-    month: headers.findIndex(h => /^month$/i.test(h)),
-    cat:   headers.findIndex(h => /^category$/i.test(h)),
-    code:  headers.findIndex(h => /data item code/i.test(h)),
-    name:  headers.findIndex(h => /data item name/i.test(h)),
-  };
-
-  const parsed = [];
-  for (let i = 1; i < rows.length; i++) {
-    const r = rows[i];
-    if (r.length < 6) continue;
-    const catMatch = r[COL.cat]?.replace(/"/g,'').match(/^(M\d+)/);
-    if (!catMatch) continue;
-
-    // normalise code — strip trailing dot so '2.2' and '2.2.' match
-    const code = r[COL.code]?.replace(/"/g,'').trim().replace(/\.$/, '');
-    const name = r[COL.name]?.replace(/"/g,'').trim();
-    const year = r[COL.year]?.replace(/"/g,'').trim();
-    const month = r[COL.month]?.replace(/"/g,'').trim();
-
-    const distTotals = {};
-    DISTRICTS.forEach(d => {
-      const raw = r[distCols[d]]?.replace(/"/g,'').replace(/,/g,'').trim();
-      distTotals[d] = parseFloat(raw) || 0;
-    });
-    const stateTotal = DISTRICTS.reduce((s, d) => s + (distTotals[d] ?? 0), 0);
-
-    parsed.push({ year, month, cat: catMatch[1], code, name, stateTotal, distTotals });
-  }
-  return parsed;
+  const res = await fetch(SHEETS_API);
+  if (!res.ok) throw new Error(`/api/sheets HTTP ${res.status}`);
+  const json = await res.json();
+  if (json.error) throw new Error(json.error);
+  /* Normalize: api/sheets returns { districts, rows } where each row has
+     { year, month, category, code, name, stateTotal, distTotals }
+     NCDDetailPage expects rows with { year, month, cat, code, name, stateTotal, distTotals } */
+  return (json.rows || []).map(r => ({
+    ...r,
+    cat: r.category?.match(/^(M\d+)/)?.[1] || '',
+  }));
 }
 
 /* ── Process raw rows for a category + year ─────────────────────── */
