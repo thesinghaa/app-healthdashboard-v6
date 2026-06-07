@@ -123,21 +123,33 @@ export default async function handler(req, res) {
   const { code, cat } = req.query;
   const apiKey = process.env.GOOGLE_SHEETS_API_KEY;
 
-  try {
-    let sheetData;
-    if (apiKey) {
+  let sheetData = null;
+  let source    = 'gviz';
+
+  /* Try Sheets API v4 first if key is set.
+     Falls back to gviz if the sheet is in Office format (xlsx not converted
+     to native Google Sheets) — common when sheet was uploaded from Excel. */
+  if (apiKey) {
+    try {
       sheetData = await fetchViaAPIv4(apiKey);
-    } else {
-      /* Fallback: gviz CSV (requires sheet to be public) */
-      sheetData = await fetchViaGviz();
+      source    = 'api_v4';
+    } catch (e) {
+      console.warn('[api/sheets] API v4 failed, falling back to gviz:', e.message);
     }
-
-    const rows      = buildRows(sheetData, code || null, cat || null);
-    const districts = sheetData.districts;
-
-    return res.status(200).json({ districts, rows, source: apiKey ? 'api_v4' : 'gviz_fallback' });
-  } catch (err) {
-    console.error('[api/sheets]', err.message);
-    return res.status(500).json({ error: err.message });
   }
+
+  if (!sheetData) {
+    try {
+      sheetData = await fetchViaGviz();
+      source    = 'gviz';
+    } catch (e) {
+      console.error('[api/sheets] gviz also failed:', e.message);
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  const rows      = buildRows(sheetData, code || null, cat || null);
+  const districts = sheetData.districts;
+
+  return res.status(200).json({ districts, rows, source });
 }
