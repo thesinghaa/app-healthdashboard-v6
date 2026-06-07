@@ -6,7 +6,7 @@
 
 ## Hard Rules
 
-1. **V6 only** — never touch v1/v2/v3/v4/v5
+1. **V6 ONLY — HARD CONSTRAINT** — ALL changes go to `/Users/thesinghaa/PIFHealthDashboard-v6/` exclusively. Never touch v1/v2/v3/v4/v5. No exceptions.
 2. **Git identity** — `git config --local` sets `thesinghaa <aryanjarvis32@gmail.com>`. Never use `--author` flag
 3. **No emojis** — not in UI, code, CSS, or commits
 4. **CSS** — append at bottom of relevant file, never rewrite whole file
