@@ -1,18 +1,18 @@
-# PIF Health Dashboard V5 — CLAUDE.md
+# PIF Health Dashboard V6 — CLAUDE.md
 
-> **V5 only.** Local: `/Users/thesinghaa/PIFHealthDashboard-v5/`. V1–V4 frozen — never touch.
+> **V6 only.** Local: `/Users/thesinghaa/PIFHealthDashboard-v6/`. V1–V5 frozen — never touch.
 
 ---
 
 ## Hard Rules
 
-1. **V5 only** — never touch v1/v2/v3/v4
+1. **V6 only** — never touch v1/v2/v3/v4/v5
 2. **Git identity** — `git config --local` sets `thesinghaa <aryanjarvis32@gmail.com>`. Never use `--author` flag
 3. **No emojis** — not in UI, code, CSS, or commits
 4. **CSS** — append at bottom of relevant file, never rewrite whole file
 5. **Subagents** — no large files without read offsets
 6. **NCD_compiled sheet** — do not connect until user asks
-7. **Deploy** — `vercel build --prod && vercel deploy --prod --prebuilt` then alias both URLs
+7. **Deploy** — `vercel deploy --prod --yes` (remote build; do NOT use prebuilt locally — Node version mismatch)
 8. **vite.config.js** — do NOT add `if (id.includes('node_modules')) return 'vendor'` (circular chunk crash)
 9. **CLAUDE.md** — update and commit at end of EVERY session (highest-priority rule)
 10. **Bundle** — ~5.8MB with Plotly + KD_TREE is acceptable, do not split unless asked
@@ -22,10 +22,11 @@
 
 ## Repo & Deploy
 
-- **GitHub**: `github.com/thesinghaa/app-healthdashboard-v5`
-- **Live**: `https://app-healthdashboard-v5.vercel.app` (primary, June 2026)
-- **Also aliased**: `pif-health-v4.vercel.app` · `arunachalhealthdashboard.vercel.app`
-- **Deploy**: `vercel build --prod && vercel deploy --prod --prebuilt` then `vercel alias set <hash> pif-health-v4.vercel.app` and `vercel alias set <hash> arunachalhealthdashboard.vercel.app`
+- **GitHub**: `github.com/thesinghaa/app-healthdashboard-v6`
+- **Live**: `https://v6appdashboard.vercel.app` (primary, June 2026)
+- **Deploy**: `vercel deploy --prod --yes` (remote build, auto-aliases v6appdashboard.vercel.app)
+- **Vercel project**: `aryansingh-8099s-projects/v6appdashboard`
+- **Note**: `.vercelignore` excludes `backend-py/` to avoid Lambda size limit
 
 ---
 
@@ -67,9 +68,10 @@ App state keys: `page | program | division | indicator | origin`
 
 ---
 
-## LandingPage Layout (V5, June 2026)
+## LandingPage Layout (V6, June 2026)
 
-1. **Hero identity bar** (`.v5-hero-bar`) — golden-orange `#C8820A`, 3 role buttons
+0. **Division nav bar** (`.v5-div-bar`) — 5 horizontal pills (RCH/NDCP/NCD/HSS/HRH) with icon + short + full name; click opens story/wheel overlay via `divPillTarget` state → `openDivDirect` prop on LeftSideNav
+1. **Hero identity bar** (`.v5-hero-bar`) — golden-orange `#C8820A`, 3 role buttons; line fades center from both content edges
 2. **Stat strip** (`.v5-stat-strip`) — 5 cards + golden pill heading "Highlights from Financial Year 2025-26"
    - Face 0 always pinned via `FACE0_PINNED` (plain text labels, no `<MarkAbbrev>`)
    - RCH: 18,024 fully immunised · NDCP: 2,314 Hep-C patients · NCD: 255 hearing aids · HSS: 408 AAMs · HRH: 96% MO-MBBS
