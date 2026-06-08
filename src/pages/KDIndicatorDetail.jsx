@@ -269,7 +269,7 @@ function DistrictSparkline({ rawRows, district, accentColor }) {
     }).filter(row => years.some(yr => row[yr] > 0));
   }, [rawRows, district, years]);
 
-  const COLORS = [accentColor, 'rgba(148,163,184,0.6)', 'rgba(203,213,225,0.5)'];
+  const COLORS = [accentColor, '#7B3F00', '#1a1a1a'];
 
   if (!district) return (
     <div className="kdi-spark-empty">Select a district to view trend</div>
@@ -289,9 +289,10 @@ function DistrictSparkline({ rawRows, district, accentColor }) {
           <Line key={yr}
             type="monotone" dataKey={yr} name={yr}
             stroke={COLORS[i % COLORS.length]}
-            strokeWidth={i === years.length - 1 ? 2 : 1.5}
+            strokeWidth={i === years.length - 1 ? 2.5 : 1.5}
             dot={false}
-            strokeOpacity={i === years.length - 1 ? 1 : 0.55}
+            strokeOpacity={1}
+            strokeDasharray={i === years.length - 1 ? '0' : i === 1 ? '5 3' : '2 2'}
           />
         ))}
       </LineChart>
