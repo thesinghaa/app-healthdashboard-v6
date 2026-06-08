@@ -19,10 +19,11 @@ function AppInner() {
   const [view, setView] = useState({
     page: 'home', program: null, division: null, indicator: null,
   });
-  // Remembers wheel position so Back from kd-indicator can restore it
-  const [wheelReturn, setWheelReturn] = useState(null); // { divId, progId }
-  const wheelReturnRef = useRef(null);
-  wheelReturnRef.current = wheelReturn; // always latest value, safe in callbacks
+  // Remembers wheel position (a ref — setting it must NOT trigger a re-render,
+  // otherwise LandingPage's reopen effect fires prematurely while still on home)
+  const wheelReturnRef = useRef(null); // { divId, progId }
+  // Reopen signal — set ONLY during goBack, passed to LandingPage to trigger wheel reopen
+  const [reopenSignal, setReopenSignal] = useState(null);
   // Login state lives here so it persists across page navigations
   const [isLoggedIn,    setIsLoggedIn]    = useState(false);
   const [loggedInUser,  setLoggedInUser]  = useState(null);
@@ -57,7 +58,7 @@ function AppInner() {
 
   const goToKDDirect = useCallback((division, programmeId, kd) => {
     const program = (division.programs || []).find(p => p.id === programmeId) || null;
-    setWheelReturn({ divId: division.id, progId: programmeId });
+    wheelReturnRef.current = { divId: division.id, progId: programmeId }; // ref only — no re-render
     transitionTo({ page: 'kd-indicator', program, division, indicator: kd, origin: 'wheel' });
   }, [transitionTo]);
 
@@ -68,8 +69,8 @@ function AppInner() {
   }, [transitionTo]);
 
   const goToDetailFromWheel = useCallback((program, division) => {
-    // From wheel "View All" — preserve wheelReturn for Back navigation
-    setWheelReturn(prev => prev || { divId: division.id, progId: program?.id });
+    // From wheel "View All" — remember wheel position (ref only) for Back navigation
+    wheelReturnRef.current = { divId: division.id, progId: program?.id };
     transitionTo({ page: 'kd-list', program, division, indicator: null, origin: 'wheel' });
   }, [transitionTo]);
 
@@ -89,28 +90,29 @@ function AppInner() {
     transitionTo({ page: 'summary', program: null, division: null, indicator: null });
   }, [transitionTo]);
 
+  // Reopen the wheel: fire the signal from the remembered ref, then clear the ref.
+  const reopenWheelNow = useCallback(() => {
+    const ret = wheelReturnRef.current;
+    wheelReturnRef.current = null;
+    setReopenSignal(ret);                       // LandingPage watches this → opens wheel + panel
+    transitionTo({ page: 'home', program: null, division: null, indicator: null });
+  }, [transitionTo]);
+
   const goBack = useCallback(() => {
     const cur = viewRef.current;
-    const hasWheelReturn = !!wheelReturnRef.current;
+    const fromWheel = cur.origin === 'wheel' || !!wheelReturnRef.current;
     if (cur.page === 'kd-indicator') {
-      // Reopen wheel if we came from wheel (either via direct click or kd-list from wheel)
-      if (cur.origin === 'wheel' || hasWheelReturn) {
-        transitionTo({ page: 'home', program: null, division: null, indicator: null });
-      } else {
-        transitionTo({ ...cur, page: 'kd-list', indicator: null });
-      }
+      if (fromWheel) reopenWheelNow();
+      else transitionTo({ ...cur, page: 'kd-list', indicator: null });
     } else if (cur.page === 'current-status') {
       transitionTo({ page: 'division', program: null, division: cur.division, indicator: null, origin: 'home' });
     } else if (cur.page === 'kd-list') {
-      if (hasWheelReturn) {
-        transitionTo({ page: 'home', program: null, division: null, indicator: null });
-      } else {
-        transitionTo({ page: 'division', program: null, division: cur.division, indicator: null, origin: 'home' });
-      }
+      if (fromWheel) reopenWheelNow();
+      else transitionTo({ page: 'division', program: null, division: cur.division, indicator: null, origin: 'home' });
     } else {
       goHome();
     }
-  }, [transitionTo, goHome]);
+  }, [transitionTo, goHome, reopenWheelNow]);
 
   const renderPage = () => {
     if (view.page === 'home') {
@@ -118,7 +120,7 @@ function AppInner() {
         onSelectDivision={goToDivision} onViewSummary={goToSummary}
         onDirectKD={goToKDDirect} onSelectProgramme={goToDetail}
         onSelectProgrammeFromWheel={goToDetailFromWheel}
-        reopenWheel={wheelReturn} onReopenWheelDone={() => setWheelReturn(null)}
+        reopenWheel={reopenSignal} onReopenWheelDone={() => setReopenSignal(null)}
         isLoggedIn={isLoggedIn} loggedInUser={loggedInUser}
         onLogin={(user) => { setIsLoggedIn(true); setLoggedInUser(user); }}
         onLogout={() => { setIsLoggedIn(false); setLoggedInUser(null); }}
