@@ -784,7 +784,50 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
               {/* Right: "What data tells?" + chart */}
               <div className="dsp-story-right">
                 <div className="dsp-data-heading">What data tells?</div>
+                {/* ── Horizontal funnel chart ── */}
                 <div className="dsp-chart-wrap">
+                  <Suspense fallback={<div className="dsp-chart-loading">Loading chart...</div>}>
+                    <Plot
+                      data={[{
+                        type: 'bar',
+                        orientation: 'h',
+                        y: [...st.bars].reverse().map(b => b.label),
+                        x: [...st.bars].reverse().map(b => b.pct),
+                        text: [...st.bars].reverse().map(b => `${b.pct}%`),
+                        textposition: 'inside',
+                        insidetextanchor: 'start',
+                        textfont: { color: division.color, size: 12, family: 'JetBrains Mono, monospace', weight: 700 },
+                        customdata: [...st.bars].reverse().map(b => b.count),
+                        hovertemplate: '<b>%{y}</b><br>%{x}%  ·  %{customdata}<extra></extra>',
+                        marker: {
+                          color: division.color + '28',
+                          line: { color: division.color + '55', width: 1.5 },
+                        },
+                      }]}
+                      layout={{
+                        height: st.bars.length * 38 + 20,
+                        margin: { l: 0, r: 60, t: 4, b: 4, pad: 0 },
+                        paper_bgcolor: 'transparent',
+                        plot_bgcolor: 'transparent',
+                        xaxis: { range: [0, 108], showgrid: false, showticklabels: false, zeroline: false, fixedrange: true },
+                        yaxis: { showgrid: false, zeroline: false, tickfont: { family: 'Inter, sans-serif', size: 12, color: '#4B5563' }, automargin: true, fixedrange: true },
+                        bargap: 0.30,
+                        annotations: [...st.bars].reverse().map((b, i) => ({
+                          x: b.pct + 1.5, y: i,
+                          xanchor: 'left', yanchor: 'middle',
+                          text: `<b>${b.count}</b>`, showarrow: false,
+                          font: { family: 'JetBrains Mono, monospace', size: 11, color: '#6B7280' },
+                        })),
+                      }}
+                      config={{ displayModeBar: false, responsive: true }}
+                      style={{ width: '100%' }}
+                      useResizeHandler
+                    />
+                  </Suspense>
+                </div>
+
+                {/* ── Vertical lollipop chart (actual vs target) ── */}
+                <div className="dsp-chart-wrap" style={{ marginTop: '12px' }}>
                   <Suspense fallback={<div className="dsp-chart-loading">Loading chart...</div>}>
                     <Plot
                       data={[
