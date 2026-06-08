@@ -837,7 +837,7 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                         {
                           type: 'bar',
                           orientation: 'v',
-                          x: st.bars.map(b => b.label),
+                          x: st.bars.map(b => b.label.length > 18 ? b.label.replace(/\s+/g, '<br>') : b.label),
                           y: st.bars.map(b => b.pct),
                           name: 'Actual',
                           marker: {
@@ -864,7 +864,7 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                         {
                           type: 'scatter',
                           mode: 'lines+markers',
-                          x: st.bars.map(b => b.label),
+                          x: st.bars.map(b => b.label.length > 18 ? b.label.replace(/\s+/g, '<br>') : b.label),
                           y: st.bars.map(b => b.target || 100),
                           name: 'Target',
                           line: { color: '#888780', width: 1.5, dash: 'dot' },
@@ -873,13 +873,13 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                         },
                       ]}
                       layout={{
-                        height: 300,
-                        margin: { l: 32, r: 8, t: 8, b: 80 },
+                        height: 340,
+                        margin: { l: 32, r: 8, t: 8, b: 100 },
                         paper_bgcolor: 'transparent',
                         plot_bgcolor: 'transparent',
                         showlegend: true,
-                        legend: { orientation: 'h', x: 0, y: -0.35, font: { size: 13, color: '#374151' }, bgcolor: 'rgba(0,0,0,0)' },
-                        xaxis: { showgrid: false, zeroline: false, tickfont: { family: 'Inter, sans-serif', size: 13, color: '#1E293B', weight: 700 }, fixedrange: true, automargin: true },
+                        legend: { orientation: 'h', x: 0, y: -0.42, font: { size: 13, color: '#374151' }, bgcolor: 'rgba(0,0,0,0)' },
+                        xaxis: { showgrid: false, zeroline: false, tickangle: 0, tickfont: { family: 'Inter, sans-serif', size: 11, color: '#1E293B', weight: 700 }, fixedrange: true, automargin: true },
                         yaxis: { range: [0, 115], ticksuffix: '%', tickfont: { size: 12, color: '#64748B', weight: 700 }, gridcolor: 'rgba(148,163,184,0.12)', zeroline: false, fixedrange: true },
                         bargap: 0.35,
                       }}
