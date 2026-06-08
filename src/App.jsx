@@ -50,7 +50,7 @@ function AppInner() {
 
   const goToKDDirect = useCallback((division, programmeId, kd) => {
     const program = (division.programs || []).find(p => p.id === programmeId) || null;
-    transitionTo({ page: 'kd-indicator', program, division, indicator: kd, origin: 'home' });
+    transitionTo({ page: 'kd-indicator', program, division, indicator: kd, origin: 'kd-list' });
   }, [transitionTo]);
 
   const goToDetail = useCallback((program, division) => {
@@ -77,11 +77,12 @@ function AppInner() {
   const goBack = useCallback(() => {
     const cur = viewRef.current;
     if (cur.page === 'kd-indicator') {
-      if (cur.origin === 'home') { goHome(); return; }
+      // Always go to programme indicator list (kd-list), never straight to home
       transitionTo({ ...cur, page: 'kd-list', indicator: null });
     } else if (cur.page === 'current-status') {
       transitionTo({ page: 'division', program: null, division: cur.division, indicator: null, origin: 'home' });
-    } else if (cur.page === 'kd-list' && cur.origin === 'division') {
+    } else if (cur.page === 'kd-list') {
+      // Go back to division page regardless of origin
       transitionTo({ page: 'division', program: null, division: cur.division, indicator: null, origin: 'home' });
     } else {
       goHome();
