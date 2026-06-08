@@ -779,6 +779,11 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                   <span className="dsp-story-hero-val" style={{ color: division.color }}>{st.hero.value}</span>
                   <span className="dsp-story-hero-text">{st.hero.text}</span>
                 </div>
+                {/* Insights box — below hero stat */}
+                <div className="dsp-insights-box">
+                  <div className="dsp-insights-label" style={{ color: division.color }}>Insights</div>
+                  <p className="dsp-insights-text">{st.insight}</p>
+                </div>
               </div>
 
               {/* Right: "What data tells?" + chart */}
@@ -894,11 +899,6 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
 
             </div>
 
-            {/* Insights box — full width inside card */}
-            <div className="dsp-insights-box">
-              <div className="dsp-insights-label" style={{ color: division.color }}>Insights</div>
-              <p className="dsp-insights-text">{st.insight}</p>
-            </div>
           </div>
         ))}
 
