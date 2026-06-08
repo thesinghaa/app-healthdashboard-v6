@@ -793,15 +793,15 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                         orientation: 'h',
                         y: [...st.bars].reverse().map(b => b.label),
                         x: [...st.bars].reverse().map(b => b.pct),
-                        text: [...st.bars].reverse().map(b => `${b.pct}%`),
+                        text: [...st.bars].reverse().map(b => `(${b.pct}%)`),
                         textposition: 'inside',
                         insidetextanchor: 'start',
-                        textfont: { color: division.color, size: 14, family: 'JetBrains Mono, monospace', weight: 700 },
+                        textfont: { color: '#ffffff', size: 13, family: 'JetBrains Mono, monospace', weight: 700 },
                         customdata: [...st.bars].reverse().map(b => b.count),
                         hovertemplate: '<b>%{y}</b><br>%{x}%  ·  %{customdata}<extra></extra>',
                         marker: {
-                          color: division.color + '28',
-                          line: { color: division.color + '55', width: 1.5 },
+                          color: division.color,
+                          line: { color: division.color, width: 0 },
                         },
                       }]}
                       layout={{
