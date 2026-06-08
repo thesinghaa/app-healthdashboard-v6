@@ -172,7 +172,7 @@ function ProgItem({ prog, color, hovered, setHovered, onSelect, side }) {
 }
 
 /* ── Full-page Programme Wheel ────────────────────────────────────────────── */
-function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedIn, loggedInUser, onLogin, onClose, onBack, onLogout, onReport }) {
+function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedIn, loggedInUser, onLogin, onClose, onBack, onLogout, onReport, initialProgId, onInitialProgConsumed }) {
   const [hovered, setHovered]   = useState(null);
   const [selected, setSelected] = useState(null);
   const pageRef   = useRef(null);
@@ -185,6 +185,14 @@ function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedI
 
   const programs  = divData?.programs || [];
   const n         = programs.length;
+
+  // Pre-select programme when returning via Back from KD indicator page
+  useEffect(() => {
+    if (!initialProgId || !programs.length) return;
+    const prog = programs.find(p => p.id === initialProgId);
+    if (prog) setSelected(prog);
+    if (onInitialProgConsumed) onInitialProgConsumed();
+  }, [initialProgId]);
   const half      = Math.floor(n / 2);
   const leftProgs  = programs.slice(0, half);
   const rightProgs = programs.slice(half);
@@ -919,10 +927,11 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
 }
 
 /* ── Left Nav panel ───────────────────────────────────────────────────────── */
-export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openWheelDirect, openDivDirect, onNeedLogin, onDirectKD, isLoggedIn, loggedInUser, onLogout, onReport }) {
+export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openWheelDirect, openDivDirect, reopenWheelWithProg, onReopenWheelWithProgDone, onNeedLogin, onDirectKD, isLoggedIn, loggedInUser, onLogout, onReport }) {
   const [open,      setOpen]      = useState(false);
   const [activeDiv, setActiveDiv] = useState(null);
   const [showWheel, setShowWheel] = useState(false);
+  const [wheelInitialProg, setWheelInitialProg] = useState(null); // progId to pre-select
 
   // Called from Login popup to skip story and go straight to wheel
   useEffect(() => {
@@ -930,6 +939,18 @@ export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openW
     const div = DIVISIONS.find(d => d.id === openWheelDirect);
     if (div) { setActiveDiv(div); setShowWheel(true); }
   }, [openWheelDirect]);
+
+  // Back from KD indicator — reopen wheel with programme pre-selected
+  useEffect(() => {
+    if (!reopenWheelWithProg) return;
+    const div = DIVISIONS.find(d => d.id === reopenWheelWithProg.divId);
+    if (div) {
+      setWheelInitialProg(reopenWheelWithProg.progId);
+      setActiveDiv(div);
+      setShowWheel(true);
+    }
+    if (onReopenWheelWithProgDone) onReopenWheelWithProgDone();
+  }, [reopenWheelWithProg]);
 
   // Called from landing page division pills — mirrors row click (story first for RCH, wheel for others)
   useEffect(() => {
@@ -996,6 +1017,8 @@ export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openW
           onSelectKD={handleKDSelect}
           isLoggedIn={isLoggedIn}
           loggedInUser={loggedInUser}
+          initialProgId={wheelInitialProg}
+          onInitialProgConsumed={() => setWheelInitialProg(null)}
           onLogin={() => onNeedLogin && onNeedLogin(null)}
           onClose={() => { setActiveDiv(null); setShowWheel(false); }}
           onBack={() => setShowWheel(false)}

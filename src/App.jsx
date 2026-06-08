@@ -19,6 +19,8 @@ function AppInner() {
   const [view, setView] = useState({
     page: 'home', program: null, division: null, indicator: null,
   });
+  // Remembers wheel position so Back from kd-indicator can restore it
+  const [wheelReturn, setWheelReturn] = useState(null); // { divId, progId }
 
   const pageRef   = useRef(null);
   const viewRef   = useRef(view);
@@ -50,7 +52,8 @@ function AppInner() {
 
   const goToKDDirect = useCallback((division, programmeId, kd) => {
     const program = (division.programs || []).find(p => p.id === programmeId) || null;
-    transitionTo({ page: 'kd-indicator', program, division, indicator: kd, origin: 'kd-list' });
+    setWheelReturn({ divId: division.id, progId: programmeId });
+    transitionTo({ page: 'kd-indicator', program, division, indicator: kd, origin: 'wheel' });
   }, [transitionTo]);
 
   const goToDetail = useCallback((program, division) => {
@@ -77,12 +80,16 @@ function AppInner() {
   const goBack = useCallback(() => {
     const cur = viewRef.current;
     if (cur.page === 'kd-indicator') {
-      // Always go to programme indicator list (kd-list), never straight to home
-      transitionTo({ ...cur, page: 'kd-list', indicator: null });
+      if (cur.origin === 'wheel') {
+        // Came from wheel — go home and reopen wheel with programme panel
+        transitionTo({ page: 'home', program: null, division: null, indicator: null });
+        // wheelReturn stays set so LandingPage can reopen wheel
+      } else {
+        transitionTo({ ...cur, page: 'kd-list', indicator: null });
+      }
     } else if (cur.page === 'current-status') {
       transitionTo({ page: 'division', program: null, division: cur.division, indicator: null, origin: 'home' });
     } else if (cur.page === 'kd-list') {
-      // Go back to division page regardless of origin
       transitionTo({ page: 'division', program: null, division: cur.division, indicator: null, origin: 'home' });
     } else {
       goHome();
@@ -91,7 +98,7 @@ function AppInner() {
 
   const renderPage = () => {
     if (view.page === 'home') {
-      return <LandingPage onSelectDivision={goToDivision} onViewSummary={goToSummary} onDirectKD={goToKDDirect} onSelectProgramme={goToDetail} />;
+      return <LandingPage onSelectDivision={goToDivision} onViewSummary={goToSummary} onDirectKD={goToKDDirect} onSelectProgramme={goToDetail} reopenWheel={wheelReturn} onReopenWheelDone={() => setWheelReturn(null)} />;
     }
     if (view.page === 'summary') {
       return <HomePage onSelectProgram={goToDetail} onSelectDivision={goToDivision} onBack={goHome} />;

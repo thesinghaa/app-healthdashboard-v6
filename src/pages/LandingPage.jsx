@@ -727,7 +727,7 @@ const LOGIN_DIVS = [
   { id: 'hrh',  short: 'HRH',  name: 'Human Resources for Health',  color: '#DC4B2A', icon: '/sidebar/HRH.png' },
 ];
 
-export default function LandingPage({ onSelectDivision, onViewSummary, onDirectKD, onSelectProgramme }) {
+export default function LandingPage({ onSelectDivision, onViewSummary, onDirectKD, onSelectProgramme, reopenWheel, onReopenWheelDone }) {
   const [reportDiv, setReportDiv] = useState(null);
   const [isLoggedIn, setIsLoggedIn]         = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
@@ -740,12 +740,20 @@ export default function LandingPage({ onSelectDivision, onViewSummary, onDirectK
   const [wheelTarget, setWheelTarget]       = useState(null);
   const [pendingDiv,  setPendingDiv]        = useState(null);
   const [divPillTarget, setDivPillTarget]  = useState(null);
+  const [wheelProgTarget, setWheelProgTarget] = useState(null); // { divId, progId } for wheel reopen
   const [showBioModal, setShowBioModal]     = useState(false);
   const [bioStatus, setBioStatus]           = useState('idle');
   const [bioStored, setBioStored]           = useState(() => !!localStorage.getItem('bio_cred'));
   const [showEnableBio, setShowEnableBio]   = useState(false);
   const [loggedInUser,  setLoggedInUser]    = useState(null);
   const divStats = useDivStats();
+
+  /* ── Reopen wheel when returning via Back from KD indicator ──────────── */
+  useEffect(() => {
+    if (!reopenWheel) return;
+    setWheelProgTarget({ divId: reopenWheel.divId, progId: reopenWheel.progId });
+    if (onReopenWheelDone) onReopenWheelDone();
+  }, [reopenWheel]);
 
   /* ── Login success handler ────────────────────────────────────────────── */
   /* pending is { kd, prog, divData } or null — passed explicitly to avoid stale closure */
@@ -837,6 +845,8 @@ export default function LandingPage({ onSelectDivision, onViewSummary, onDirectK
       <LeftSideNav onSelectDivision={onSelectDivision} onSelectProgramme={onSelectProgramme}
         openWheelDirect={wheelTarget}
         openDivDirect={divPillTarget}
+        reopenWheelWithProg={wheelProgTarget}
+        onReopenWheelWithProgDone={() => setWheelProgTarget(null)}
         onNeedLogin={handleNeedLogin}
         onDirectKD={onDirectKD}
         isLoggedIn={isLoggedIn}
