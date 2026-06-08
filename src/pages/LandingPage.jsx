@@ -727,9 +727,10 @@ const LOGIN_DIVS = [
   { id: 'hrh',  short: 'HRH',  name: 'Human Resources for Health',  color: '#DC4B2A', icon: '/sidebar/HRH.png' },
 ];
 
-export default function LandingPage({ onSelectDivision, onViewSummary, onDirectKD, onSelectProgramme, reopenWheel, onReopenWheelDone }) {
+export default function LandingPage({ onSelectDivision, onViewSummary, onDirectKD, onSelectProgramme, reopenWheel, onReopenWheelDone, isLoggedIn: isLoggedInProp, loggedInUser: loggedInUserProp, onLogin, onLogout: onLogoutProp }) {
   const [reportDiv, setReportDiv] = useState(null);
-  const [isLoggedIn, setIsLoggedIn]         = useState(false);
+  const isLoggedIn    = isLoggedInProp    ?? false;
+  const loggedInUser2 = loggedInUserProp  ?? null;
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showLoginGate, setShowLoginGate]   = useState(false);
   const [loginUser, setLoginUser]           = useState('');
@@ -745,7 +746,8 @@ export default function LandingPage({ onSelectDivision, onViewSummary, onDirectK
   const [bioStatus, setBioStatus]           = useState('idle');
   const [bioStored, setBioStored]           = useState(() => !!localStorage.getItem('bio_cred'));
   const [showEnableBio, setShowEnableBio]   = useState(false);
-  const [loggedInUser,  setLoggedInUser]    = useState(null);
+  const loggedInUser  = loggedInUser2;
+  const setLoggedInUser = (u) => onLogin && onLogin(u);
   const divStats = useDivStats();
 
   /* ── Reopen wheel when returning via Back from KD indicator ──────────── */
@@ -759,7 +761,7 @@ export default function LandingPage({ onSelectDivision, onViewSummary, onDirectK
   /* pending is { kd, prog, divData } or null — passed explicitly to avoid stale closure */
   function handleLoginSuccess(pending) {
     const p = pending ?? pendingDiv;
-    setIsLoggedIn(true);
+    if (onLogin) onLogin(loginUser || 'PIF');
     setShowLoginGate(false);
     setPendingDiv(null);
     if (p?.kd) {
@@ -852,7 +854,7 @@ export default function LandingPage({ onSelectDivision, onViewSummary, onDirectK
         onDirectKD={onDirectKD}
         isLoggedIn={isLoggedIn}
         loggedInUser={loggedInUser}
-        onLogout={() => { setIsLoggedIn(false); setShowLoginPopup(false); setLoggedInUser(null); }}
+        onLogout={() => { setShowLoginPopup(false); if (onLogoutProp) onLogoutProp(); }}
         onReport={(divId, divName, divColor) => setReportDiv({ id: divId, name: divName, color: divColor })} />
 
       {/* ── Navbar ──────────────────────────────────────────────────────── */}

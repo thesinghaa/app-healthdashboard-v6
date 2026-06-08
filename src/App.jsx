@@ -21,6 +21,9 @@ function AppInner() {
   });
   // Remembers wheel position so Back from kd-indicator can restore it
   const [wheelReturn, setWheelReturn] = useState(null); // { divId, progId }
+  // Login state lives here so it persists across page navigations
+  const [isLoggedIn,    setIsLoggedIn]    = useState(false);
+  const [loggedInUser,  setLoggedInUser]  = useState(null);
 
   const pageRef   = useRef(null);
   const viewRef   = useRef(view);
@@ -98,7 +101,14 @@ function AppInner() {
 
   const renderPage = () => {
     if (view.page === 'home') {
-      return <LandingPage onSelectDivision={goToDivision} onViewSummary={goToSummary} onDirectKD={goToKDDirect} onSelectProgramme={goToDetail} reopenWheel={wheelReturn} onReopenWheelDone={() => setWheelReturn(null)} />;
+      return <LandingPage
+        onSelectDivision={goToDivision} onViewSummary={goToSummary}
+        onDirectKD={goToKDDirect} onSelectProgramme={goToDetail}
+        reopenWheel={wheelReturn} onReopenWheelDone={() => setWheelReturn(null)}
+        isLoggedIn={isLoggedIn} loggedInUser={loggedInUser}
+        onLogin={(user) => { setIsLoggedIn(true); setLoggedInUser(user); }}
+        onLogout={() => { setIsLoggedIn(false); setLoggedInUser(null); }}
+      />;
     }
     if (view.page === 'summary') {
       return <HomePage onSelectProgram={goToDetail} onSelectDivision={goToDivision} onBack={goHome} />;
