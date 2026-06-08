@@ -146,17 +146,26 @@ function parseNarrative(text) {
   return { exec, analyses, working, recs };
 }
 
-async function groqCall(apiKey, model, systemMsg, userMsg, maxTokens) {
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model, temperature: 0.25, max_tokens: maxTokens,
-      messages: [{ role: 'system', content: systemMsg }, { role: 'user', content: userMsg }],
-    }),
-  });
-  if (!res.ok) throw new Error(`Groq error ${res.status}: ${(await res.text()).slice(0, 300)}`);
-  return (await res.json()).choices[0].message.content;
+/* Try each key in order; on rate-limit (429) or auth (401) error, fall back to the next key. */
+async function groqCall(apiKeys, model, systemMsg, userMsg, maxTokens) {
+  const keys = (Array.isArray(apiKeys) ? apiKeys : [apiKeys]).filter(Boolean);
+  let lastErr;
+  for (const apiKey of keys) {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model, temperature: 0.25, max_tokens: maxTokens,
+        messages: [{ role: 'system', content: systemMsg }, { role: 'user', content: userMsg }],
+      }),
+    });
+    if (res.ok) return (await res.json()).choices[0].message.content;
+    const body = (await res.text()).slice(0, 300);
+    lastErr = new Error(`Groq error ${res.status}: ${body}`);
+    // Only fall back on rate-limit / auth / server errors — otherwise fail fast
+    if (![429, 401, 403, 500, 502, 503].includes(res.status)) throw lastErr;
+  }
+  throw lastErr || new Error('Groq: no API keys configured');
 }
 
 /* ─────────────────────────────────────────────────────────────────
@@ -611,8 +620,12 @@ export default async function handler(req, res) {
   if (!VALID.has(divisionId))
     return res.status(404).json({ detail: `Unknown division: ${divisionId}` });
 
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey)
+  // Primary key from env, then fallback (GROQ_API_KEY_2) — tried in order, falls back on 429
+  const apiKeys = [
+    process.env.GROQ_API_KEY,
+    process.env.GROQ_API_KEY_2,
+  ].filter(Boolean);
+  if (!apiKeys.length)
     return res.status(500).json({ detail: 'GROQ_API_KEY not configured' });
 
   res.setHeader('Content-Type',  'text/event-stream');
@@ -631,7 +644,7 @@ export default async function handler(req, res) {
     send({ type: 'step', idx: 1 });
     const prompt = buildPrompt(divData);
     const narrative = await groqCall(
-      apiKey, STRONG_MODEL,
+      apiKeys, STRONG_MODEL,
       'You are a senior public health analyst at Pahlé India Foundation. Follow the section format EXACTLY as instructed.',
       prompt,
       2500,
