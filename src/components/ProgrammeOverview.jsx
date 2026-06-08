@@ -338,7 +338,7 @@ export default function ProgrammeOverview({ onSelectDivision, totalKDs = 0 }) {
               <div className="pov-stats-row">
                 <div className="pov-stat">
                   <span className="pov-stat-val" style={{ color: clr.main }}>{brk.total}</span>
-                  <span className="pov-stat-lbl">KDs</span>
+                  <span className="pov-stat-lbl">Indicators</span>
                 </div>
                 <div className="pov-stat">
                   <span className="pov-stat-val" style={{ color: '#059669' }}>{onTrackPct}%</span>
@@ -379,7 +379,7 @@ export default function ProgrammeOverview({ onSelectDivision, totalKDs = 0 }) {
                 <span className="pov-card-num">{onTrackPct}%</span>
                 <span className="pov-card-unit"> On Track</span>
               </div>
-              <div className="pov-card-sub">{brk.achieved} of {brk.total} KDs achieved</div>
+              <div className="pov-card-sub">{brk.achieved} of {brk.total} indicators achieved</div>
               <div className="pov-card-bar">
                 {brk.total > 0 && <>
                   <div style={{ width: `${(brk.achieved / brk.total) * 100}%`, background: '#059669' }} />

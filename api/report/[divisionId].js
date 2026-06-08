@@ -78,12 +78,12 @@ function buildPrompt(divData) {
 
   const lines = [
     `DIVISION: ${fullName} | FY 2025-26 | NHM Arunachal Pradesh`,
-    `OVERVIEW: ${totals.total} KDs — ${totals.achieved} achieved, ${totals.close} caution, ${totals.gap} critical\n`,
+    `OVERVIEW: ${totals.total} Indicators — ${totals.achieved} achieved, ${totals.close} caution, ${totals.gap} critical\n`,
   ];
 
   for (const p of programmes) {
     const tag = p.status === 'red' ? 'CRITICAL' : p.status === 'yellow' ? 'CAUTION' : 'ON TRACK';
-    lines.push(`\nPROGRAMME: ${p.name} [${p.id}] — ${tag} — ${p.counts.achieved}/${p.total} KDs achieved`);
+    lines.push(`\nPROGRAMME: ${p.name} [${p.id}] — ${tag} — ${p.counts.achieved}/${p.total} Indicators achieved`);
     for (const kd of p.gapKDs.slice(0, 3)) {
       const gap = (kdDeficit(kd) * 100).toFixed(0);
       lines.push(`  GAP: ${kd.indicator}: ${kd.achievedLabel ?? kd.achievement} vs target ${kd.targetLabel ?? kd.target} (${gap}% gap)`);
@@ -352,7 +352,7 @@ function cover(divName, today, totals) {
   <div class="cover-kpis">
     <div class="kpi-box">
       <div class="kpi-val">${totals.total}</div>
-      <div class="kpi-lbl">KDs Tracked</div>
+      <div class="kpi-lbl">Indicators Tracked</div>
     </div>
     <div class="kpi-box kpi-box--red">
       <div class="kpi-val kpi-val--red">${totals.gap}</div>
@@ -442,8 +442,8 @@ function prioritySection(programmes, analyses) {
         ${statusBadge(p.status)}
       </div>
       <div class="kd-chips" style="margin-bottom:12px">
-        ${p.counts.gap    > 0 ? `<span class="kd-chip kd-chip-red">${p.counts.gap} critical KDs</span>`    : ''}
-        ${p.counts.close  > 0 ? `<span class="kd-chip kd-chip-yellow">${p.counts.close} caution KDs</span>` : ''}
+        ${p.counts.gap    > 0 ? `<span class="kd-chip kd-chip-red">${p.counts.gap} critical indicators</span>`    : ''}
+        ${p.counts.close  > 0 ? `<span class="kd-chip kd-chip-yellow">${p.counts.close} caution indicators</span>` : ''}
         ${p.counts.achieved > 0 ? `<span class="kd-chip kd-chip-green">${p.counts.achieved} on track</span>` : ''}
       </div>
       ${p.gapKDs.length ? `<table class="kd-data-table">

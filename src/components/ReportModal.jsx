@@ -4,7 +4,7 @@ const API_BASE = import.meta.env.VITE_REPORT_API_URL || '';
 
 /* Steps match real backend SSE events — idx 0-3 */
 const STEPS = [
-  { label: 'Computing KD data',      pct: 15  },
+  { label: 'Computing indicator data', pct: 15  },
   { label: 'Analysing performance',  pct: 55  },
   { label: 'Building report',        pct: 90  },
   { label: 'Finalising',            pct: 100 },
@@ -107,7 +107,7 @@ export default function ReportModal({ divisionId, divisionName, divisionColor, o
               </div>
               <h3 className="rpt-idle-title">Generate Division Report</h3>
               <p className="rpt-idle-desc">
-                3 AI agents will analyse all {divisionName} KDs and NFHS baselines —
+                3 AI agents will analyse all {divisionName} indicators and NFHS baselines —
                 then write a 4–5 page executive report with recommendations.
                 Takes ~40–60 seconds.
               </p>
