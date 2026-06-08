@@ -873,8 +873,8 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                         },
                       ]}
                       layout={{
-                        height: 340,
-                        margin: { l: 32, r: 8, t: 8, b: 100 },
+                        height: 260,
+                        margin: { l: 32, r: 8, t: 8, b: 80 },
                         paper_bgcolor: 'transparent',
                         plot_bgcolor: 'transparent',
                         showlegend: true,
