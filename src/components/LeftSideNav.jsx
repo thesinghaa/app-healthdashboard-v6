@@ -182,6 +182,9 @@ function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedI
   const headerRef = useRef(null);
   const footerRef = useRef(null);
   const panelRef  = useRef(null);
+  // True when mounting with a programme already selected (returned from indicator via Back)
+  const mountPreSelectedRef = useRef(!!initialProgId);
+  const skipNextSelectAnimRef = useRef(!!initialProgId);
 
   const programs  = divData?.programs || [];
   const n         = programs.length;
@@ -229,6 +232,16 @@ function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedI
   /* entry animation */
   useEffect(() => {
     pageRef.current?.focus({ preventScroll: true });
+    // Returned from indicator with a programme pre-selected: jump straight to the
+    // selected layout (cards hidden, wheel shifted). No entry animation — it would
+    // race the select-fade-out and leave cards stuck over the wheel.
+    if (mountPreSelectedRef.current) {
+      gsap.set(pageRef.current, { opacity: 1 });
+      gsap.set([leftRef.current, rightRef.current], { opacity: 0 });
+      gsap.set(footerRef.current, { opacity: 0 });
+      gsap.set(wheelRef.current, { x: '-27vw', opacity: 1, scale: 1, rotation: 0 });
+      return;
+    }
     const tl = gsap.timeline();
     tl.fromTo(pageRef.current,
       { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
@@ -246,6 +259,21 @@ function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedI
 
   /* on select: fade cards, shift wheel+header left, slide panel in */
   useEffect(() => {
+    // Pre-selected mount (Back from indicator). The entry effect already set the
+    // collapsed layout. Skip ALL animations here — including the render-1 (selected=null)
+    // reverse branch, which would otherwise animate cards back to visible and undo it.
+    if (skipNextSelectAnimRef.current) {
+      if (selected) {
+        // render with the programme applied — settle the layout instantly
+        skipNextSelectAnimRef.current = false;
+        gsap.killTweensOf([leftRef.current, rightRef.current, footerRef.current, wheelRef.current]);
+        gsap.set([leftRef.current, rightRef.current], { opacity: 0 });
+        gsap.set(footerRef.current, { opacity: 0 });
+        gsap.set(wheelRef.current, { x: '-27vw' });
+        if (panelRef.current) gsap.set(panelRef.current, { x: 0, opacity: 1 });
+      }
+      return; // render-1 (selected null): do nothing, entry effect owns the layout
+    }
     if (selected) {
       /* fade out cards + footer */
       gsap.to([leftRef.current, rightRef.current],
