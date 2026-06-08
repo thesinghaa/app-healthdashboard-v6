@@ -21,6 +21,8 @@ function AppInner() {
   });
   // Remembers wheel position so Back from kd-indicator can restore it
   const [wheelReturn, setWheelReturn] = useState(null); // { divId, progId }
+  const wheelReturnRef = useRef(null);
+  wheelReturnRef.current = wheelReturn; // always latest value, safe in callbacks
   // Login state lives here so it persists across page navigations
   const [isLoggedIn,    setIsLoggedIn]    = useState(false);
   const [loggedInUser,  setLoggedInUser]  = useState(null);
@@ -61,7 +63,14 @@ function AppInner() {
 
   const goToDetail = useCallback((program, division) => {
     const origin = viewRef.current.page;
+    // Preserve wheelReturn so Back from kd-list (via View All) still reopens wheel
     transitionTo({ page: 'kd-list', program, division, indicator: null, origin });
+  }, [transitionTo]);
+
+  const goToDetailFromWheel = useCallback((program, division) => {
+    // From wheel "View All" — preserve wheelReturn for Back navigation
+    setWheelReturn(prev => prev || { divId: division.id, progId: program?.id });
+    transitionTo({ page: 'kd-list', program, division, indicator: null, origin: 'wheel' });
   }, [transitionTo]);
 
   const goToIndicator = useCallback((indicator) => {
@@ -82,18 +91,22 @@ function AppInner() {
 
   const goBack = useCallback(() => {
     const cur = viewRef.current;
+    const hasWheelReturn = !!wheelReturnRef.current;
     if (cur.page === 'kd-indicator') {
-      if (cur.origin === 'wheel') {
-        // Came from wheel — go home and reopen wheel with programme panel
+      // Reopen wheel if we came from wheel (either via direct click or kd-list from wheel)
+      if (cur.origin === 'wheel' || hasWheelReturn) {
         transitionTo({ page: 'home', program: null, division: null, indicator: null });
-        // wheelReturn stays set so LandingPage can reopen wheel
       } else {
         transitionTo({ ...cur, page: 'kd-list', indicator: null });
       }
     } else if (cur.page === 'current-status') {
       transitionTo({ page: 'division', program: null, division: cur.division, indicator: null, origin: 'home' });
     } else if (cur.page === 'kd-list') {
-      transitionTo({ page: 'division', program: null, division: cur.division, indicator: null, origin: 'home' });
+      if (hasWheelReturn) {
+        transitionTo({ page: 'home', program: null, division: null, indicator: null });
+      } else {
+        transitionTo({ page: 'division', program: null, division: cur.division, indicator: null, origin: 'home' });
+      }
     } else {
       goHome();
     }
@@ -104,6 +117,7 @@ function AppInner() {
       return <LandingPage
         onSelectDivision={goToDivision} onViewSummary={goToSummary}
         onDirectKD={goToKDDirect} onSelectProgramme={goToDetail}
+        onSelectProgrammeFromWheel={goToDetailFromWheel}
         reopenWheel={wheelReturn} onReopenWheelDone={() => setWheelReturn(null)}
         isLoggedIn={isLoggedIn} loggedInUser={loggedInUser}
         onLogin={(user) => { setIsLoggedIn(true); setLoggedInUser(user); }}
@@ -136,7 +150,7 @@ function AppInner() {
         <KDProgrammePage
           program={view.program}
           division={view.division}
-          onBack={goHome}
+          onBack={goBack}
           onSelectIndicator={goToIndicator}
           onCurrentStatus={goToCurrentStatus}
         />

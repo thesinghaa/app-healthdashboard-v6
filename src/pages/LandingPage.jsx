@@ -727,7 +727,7 @@ const LOGIN_DIVS = [
   { id: 'hrh',  short: 'HRH',  name: 'Human Resources for Health',  color: '#DC4B2A', icon: '/sidebar/HRH.png' },
 ];
 
-export default function LandingPage({ onSelectDivision, onViewSummary, onDirectKD, onSelectProgramme, reopenWheel, onReopenWheelDone, isLoggedIn: isLoggedInProp, loggedInUser: loggedInUserProp, onLogin, onLogout: onLogoutProp }) {
+export default function LandingPage({ onSelectDivision, onViewSummary, onDirectKD, onSelectProgramme, onSelectProgrammeFromWheel, reopenWheel, onReopenWheelDone, isLoggedIn: isLoggedInProp, loggedInUser: loggedInUserProp, onLogin, onLogout: onLogoutProp }) {
   const [reportDiv, setReportDiv] = useState(null);
   const isLoggedIn    = isLoggedInProp    ?? false;
   const loggedInUser2 = loggedInUserProp  ?? null;
@@ -845,7 +845,7 @@ export default function LandingPage({ onSelectDivision, onViewSummary, onDirectK
       <div className="v4l-root">
 
       {/* ── Left side navigation panel ──────────────────────────────────── */}
-      <LeftSideNav onSelectDivision={onSelectDivision} onSelectProgramme={onSelectProgramme}
+      <LeftSideNav onSelectDivision={onSelectDivision} onSelectProgramme={onSelectProgrammeFromWheel || onSelectProgramme}
         openWheelDirect={wheelTarget}
         openDivDirect={divPillTarget}
         reopenWheelWithProg={wheelProgTarget}
