@@ -1,4 +1,4 @@
-import json, os, textwrap
+import json
 from pathlib import Path
 
 _DATA_PATH = Path(__file__).parent.parent / "kd_data.json"
@@ -13,68 +13,84 @@ def _load() -> dict:
     return _cache
 
 
+def _kd_status(kd: dict) -> str:
+    t, a = kd.get("target"), kd.get("achievement")
+    if not t or a is None:
+        return "neutral"
+    ratio = a / t
+    li = kd.get("lowerIsBetter", False)
+    if (li and ratio <= 1.00) or (not li and ratio >= 1.00):
+        return "achieved"
+    if (li and ratio <= 1.33) or (not li and ratio >= 0.75):
+        return "close"
+    return "gap"
+
+
+def _deficit(kd: dict) -> float:
+    t, a = kd.get("target"), kd.get("achievement")
+    if not t or a is None:
+        return 0.0
+    ratio = a / t
+    return (ratio - 1) if kd.get("lowerIsBetter") else (1 - ratio)
+
+
 def get_division_summary(division_id: str) -> str:
+    """
+    Compact summary — target ~700 tokens to stay under Groq TPM limits.
+    Contains: division snapshot, per-programme status, top-5 gaps, top-3 achievements.
+    """
     data = _load()
-    div = data.get(division_id)
+    div  = data.get(division_id)
     if not div:
         return f"Division '{division_id}' not found."
 
-    lines = [
-        f"DIVISION: {div['fullName']} ({div['label']})",
-        f"Total programmes: {len(div['programmes'])}",
-        "",
-    ]
+    all_gap, all_ach = [], []
+    prog_rows = []
 
     for prog_id, prog in div["programmes"].items():
         kds = prog.get("kds", [])
-        achieved = close = gap = neutral = 0
-        gap_kds, close_kds = [], []
-
+        achieved = close = gap = 0
         for kd in kds:
-            t, a = kd.get("target"), kd.get("achievement")
-            if t is None or a is None or t == 0:
-                neutral += 1
-                continue
-            ratio = a / t
-            if kd.get("lowerIsBetter"):
-                if ratio <= 1.00:   achieved += 1
-                elif ratio <= 1.33: close += 1; close_kds.append(kd)
-                else:               gap += 1;   gap_kds.append(kd)
-            else:
-                if ratio >= 1.00:   achieved += 1
-                elif ratio >= 0.75: close += 1; close_kds.append(kd)
-                else:               gap += 1;   gap_kds.append(kd)
+            st = _kd_status(kd)
+            if st == "achieved":
+                achieved += 1
+                all_ach.append((_deficit(kd), prog["name"], kd))
+            elif st == "close":
+                close += 1
+            elif st == "gap":
+                gap += 1
+                all_gap.append((_deficit(kd), prog["name"], kd))
 
-        total_scored = achieved + close + gap
-        lines += [
-            f"── PROGRAMME: {prog['name']} | Status: {prog['status'].upper()}",
-            f"   Key metric: {prog.get('keyMetric', 'N/A')}",
-            f"   KD scores: {achieved} achieved / {close} caution / {gap} gap (of {total_scored} scored, {neutral} neutral)",
-        ]
-        if prog.get("summary"):
-            lines.append(f"   Summary: {prog['summary']}")
-        if gap_kds:
-            lines.append("   GAP indicators (achievement < 75% of target):")
-            for kd in gap_kds[:5]:
-                t, a = kd['target'], kd['achievement']
-                pct = round((a / t) * 100) if t else 0
-                lines.append(f"     • {kd['indicator']}: target={kd['targetLabel']}, achieved={kd['achievedLabel']} ({pct}% of target)")
-        if close_kds:
-            lines.append("   CAUTION indicators (75–99% of target):")
-            for kd in close_kds[:3]:
-                t, a = kd['target'], kd['achievement']
-                pct = round((a / t) * 100) if t else 0
-                lines.append(f"     • {kd['indicator']}: target={kd['targetLabel']}, achieved={kd['achievedLabel']} ({pct}% of target)")
-        if prog.get("observations"):
-            lines.append("   Key observations:")
-            for obs in prog["observations"][:3]:
-                lines.append(f"     - {obs}")
-        if prog.get("nfhsData"):
-            lines.append("   NFHS trend (select indicators):")
-            for nf in prog["nfhsData"][:4]:
-                direction = "↓ lower is better" if nf.get("lowerIsBetter") else "↑ higher is better"
-                lines.append(f"     • {nf['label']}: NFHS-4={nf['nfhs4']}% → NFHS-5={nf['nfhs5']}% ({direction})")
-        lines.append("")
+        status = "CRITICAL" if gap else ("CAUTION" if close else "ON TRACK")
+        prog_rows.append(
+            f"  {prog['name']}: {status} | {achieved} ok / {close} caution / {gap} gap"
+        )
+
+    all_gap.sort(key=lambda x: -x[0])
+    all_ach.sort(key=lambda x:  x[0])   # closest-to-target first for achievements
+
+    lines = [
+        f"DIVISION: {div['fullName']} | FY 2025-26 | NHM Arunachal Pradesh",
+        "",
+        "PROGRAMME STATUS:",
+    ] + prog_rows
+
+    lines += ["", "TOP 5 CRITICAL GAPS (largest deficit first):"]
+    for deficit, prog_name, kd in all_gap[:5]:
+        lines.append(
+            f"  [{prog_name}] {kd['indicator']}: "
+            f"target {kd.get('targetLabel', kd.get('target'))}, "
+            f"achieved {kd.get('achievedLabel', kd.get('achievement'))} "
+            f"({round(deficit*100)}% shortfall)"
+        )
+
+    lines += ["", "TOP 3 ACHIEVEMENTS:"]
+    for _, prog_name, kd in all_ach[:3]:
+        lines.append(
+            f"  [{prog_name}] {kd['indicator']}: "
+            f"{kd.get('achievedLabel', kd.get('achievement'))} "
+            f"(target {kd.get('targetLabel', kd.get('target'))})"
+        )
 
     return "\n".join(lines)
 

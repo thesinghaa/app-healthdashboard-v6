@@ -1,7 +1,7 @@
 import httpx, csv, io
 from collections import defaultdict
 
-SHEET_ID = "1vsCSdPZpBK5SQw9gppRLEEKDLhj19DHk"
+SHEET_ID = "1iVenSpoyXMuFf9aG3eB3O-ZoEG0ifScHIhuDnUM8g2M"   # native Google Sheets copy
 CSV_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1"
 
 # Category labels
