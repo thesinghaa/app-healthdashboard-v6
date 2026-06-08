@@ -795,8 +795,21 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                           y: st.bars.map(b => b.pct),
                           name: 'Actual',
                           marker: {
-                            color: division.color + '22',
-                            line: { color: st.bars.map(b => b.pct >= (b.target || 100) ? division.color : '#E24B4A'), width: 1.5 },
+                            color: st.bars.map(b => {
+                              const gap = (b.target || 100) - b.pct;
+                              if (gap <= 5)  return division.color + '40';
+                              if (gap <= 15) return '#F59E0B22';
+                              return '#EF444422';
+                            }),
+                            line: {
+                              color: st.bars.map(b => {
+                                const gap = (b.target || 100) - b.pct;
+                                if (gap <= 5)  return division.color;
+                                if (gap <= 15) return '#F59E0B';
+                                return '#EF4444';
+                              }),
+                              width: 2,
+                            },
                           },
                           width: 0.45,
                           customdata: st.bars.map(b => [b.target || 100, b.count, Math.max(0, (b.target || 100) - b.pct)]),
