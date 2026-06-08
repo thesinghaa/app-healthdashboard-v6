@@ -826,8 +826,11 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                   </Suspense>
                 </div>
 
+                {/* ── Divider ── */}
+                <div style={{ height: '2px', background: '#1B6FF5', borderRadius: '2px', margin: '14px 0' }} />
+
                 {/* ── Vertical lollipop chart (actual vs target) ── */}
-                <div className="dsp-chart-wrap" style={{ marginTop: '12px' }}>
+                <div className="dsp-chart-wrap" style={{ marginTop: '0' }}>
                   <Suspense fallback={<div className="dsp-chart-loading">Loading chart...</div>}>
                     <Plot
                       data={[
