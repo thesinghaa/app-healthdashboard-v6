@@ -5613,16 +5613,16 @@ td:last-child { padding: 8px 10px; }
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-family: 'JetBrains Mono', monospace;
 }
 .dsp-narrative-text {
-  font-size: 13px;
+  font-size: 15px;
   color: #334155;
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
 }
 
@@ -5652,7 +5652,7 @@ td:last-child { padding: 8px 10px; }
   background: #FAFBFC;
 }
 .dsp-insights-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -5660,9 +5660,9 @@ td:last-child { padding: 8px 10px; }
   margin-bottom: 6px;
 }
 .dsp-insights-text {
-  font-size: 13px;
+  font-size: 15px;
   color: #334155;
-  line-height: 1.55;
+  line-height: 1.6;
   margin: 0;
 }
 
