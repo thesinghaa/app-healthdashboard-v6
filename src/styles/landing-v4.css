@@ -5563,6 +5563,7 @@ td:last-child { padding: 8px 10px; }
 .dsp-story-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  align-items: start;
   gap: 18px;
   margin-bottom: 12px;
   margin-top: 4px;
@@ -5571,6 +5572,7 @@ td:last-child { padding: 8px 10px; }
   display: flex;
   flex-direction: column;
   gap: 10px;
+  align-self: start;
 }
 .dsp-story-left .dsp-story-hero {
   margin-bottom: 0;
@@ -5599,7 +5601,7 @@ td:last-child { padding: 8px 10px; }
 
 /* "Why this story" narrative box — replaces the icon placeholder */
 .dsp-story-narrative {
-  flex: 1;
+  flex: 0 0 auto;
   border: 1.5px solid;
   border-radius: 12px;
   padding: 10px 14px 12px;
