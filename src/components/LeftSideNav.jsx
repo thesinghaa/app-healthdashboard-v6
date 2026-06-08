@@ -172,7 +172,7 @@ function ProgItem({ prog, color, hovered, setHovered, onSelect, side }) {
 }
 
 /* ── Full-page Programme Wheel ────────────────────────────────────────────── */
-function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedIn, loggedInUser, onLogin, onClose, onLogout, onReport }) {
+function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedIn, loggedInUser, onLogin, onClose, onBack, onLogout, onReport }) {
   const [hovered, setHovered]   = useState(null);
   const [selected, setSelected] = useState(null);
   const pageRef   = useRef(null);
@@ -290,7 +290,7 @@ function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedI
     >
       {/* ── Header ── */}
       <header className="wpg-header" ref={headerRef}>
-        <button className="wpg-back-btn" onClick={onLogout || close}>
+        <button className="wpg-back-btn" onClick={onBack || close}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <path d="M19 12H5M12 5l-7 7 7 7"/>
           </svg>
@@ -998,6 +998,7 @@ export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openW
           loggedInUser={loggedInUser}
           onLogin={() => onNeedLogin && onNeedLogin(null)}
           onClose={() => { setActiveDiv(null); setShowWheel(false); }}
+          onBack={() => setShowWheel(false)}
           onLogout={onLogout ? () => { setActiveDiv(null); setShowWheel(false); onLogout(); } : null}
           onReport={onReport ? () => onReport(activeDiv.id, activeDiv.name, activeDiv.color) : null}
         />
