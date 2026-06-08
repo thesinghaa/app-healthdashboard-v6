@@ -988,7 +988,7 @@ export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openW
 
   function handleKDSelect(kd, prog, divData) {
     if (!isLoggedIn) {
-      if (onNeedLogin) onNeedLogin(null);
+      if (onNeedLogin) onNeedLogin({ kd, prog, divData });
       return;
     }
     setOpen(false);

@@ -762,8 +762,9 @@ export default function LandingPage({ onSelectDivision, onViewSummary, onDirectK
     setIsLoggedIn(true);
     setShowLoginGate(false);
     setPendingDiv(null);
-    if (p) {
+    if (p?.kd) {
       if (onDirectKD) onDirectKD(p.divData, p.prog.id, p.kd);
+      // No division popup — user came from wheel, navigating straight to indicator
     } else if (WEBAUTHN_SUPPORTED && !bioStored) {
       setShowEnableBio(true);
     } else {
