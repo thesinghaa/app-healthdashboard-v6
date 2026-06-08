@@ -796,7 +796,7 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                         text: [...st.bars].reverse().map(b => `${b.pct}%`),
                         textposition: 'inside',
                         insidetextanchor: 'start',
-                        textfont: { color: division.color, size: 12, family: 'JetBrains Mono, monospace', weight: 700 },
+                        textfont: { color: division.color, size: 14, family: 'JetBrains Mono, monospace', weight: 700 },
                         customdata: [...st.bars].reverse().map(b => b.count),
                         hovertemplate: '<b>%{y}</b><br>%{x}%  ·  %{customdata}<extra></extra>',
                         marker: {
@@ -810,13 +810,13 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                         paper_bgcolor: 'transparent',
                         plot_bgcolor: 'transparent',
                         xaxis: { range: [0, 108], showgrid: false, showticklabels: false, zeroline: false, fixedrange: true },
-                        yaxis: { showgrid: false, zeroline: false, tickfont: { family: 'Inter, sans-serif', size: 12, color: '#4B5563' }, automargin: true, fixedrange: true },
+                        yaxis: { showgrid: false, zeroline: false, tickfont: { family: 'Inter, sans-serif', size: 14, color: '#1E293B', weight: 700 }, automargin: true, fixedrange: true },
                         bargap: 0.30,
                         annotations: [...st.bars].reverse().map((b, i) => ({
                           x: b.pct + 1.5, y: i,
                           xanchor: 'left', yanchor: 'middle',
                           text: `<b>${b.count}</b>`, showarrow: false,
-                          font: { family: 'JetBrains Mono, monospace', size: 11, color: '#6B7280' },
+                          font: { family: 'JetBrains Mono, monospace', size: 13, color: '#374151' },
                         })),
                       }}
                       config={{ displayModeBar: false, responsive: true }}
@@ -878,9 +878,9 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                         paper_bgcolor: 'transparent',
                         plot_bgcolor: 'transparent',
                         showlegend: true,
-                        legend: { orientation: 'h', x: 0, y: -0.35, font: { size: 11, color: '#888780' }, bgcolor: 'rgba(0,0,0,0)' },
-                        xaxis: { showgrid: false, zeroline: false, tickfont: { family: 'Inter, sans-serif', size: 11, color: '#4B5563' }, fixedrange: true, automargin: true },
-                        yaxis: { range: [0, 115], ticksuffix: '%', tickfont: { size: 10, color: '#94A3B8' }, gridcolor: 'rgba(148,163,184,0.12)', zeroline: false, fixedrange: true },
+                        legend: { orientation: 'h', x: 0, y: -0.35, font: { size: 13, color: '#374151' }, bgcolor: 'rgba(0,0,0,0)' },
+                        xaxis: { showgrid: false, zeroline: false, tickfont: { family: 'Inter, sans-serif', size: 13, color: '#1E293B', weight: 700 }, fixedrange: true, automargin: true },
+                        yaxis: { range: [0, 115], ticksuffix: '%', tickfont: { size: 12, color: '#64748B', weight: 700 }, gridcolor: 'rgba(148,163,184,0.12)', zeroline: false, fixedrange: true },
                         bargap: 0.35,
                       }}
                       config={{ displayModeBar: false, responsive: true }}
