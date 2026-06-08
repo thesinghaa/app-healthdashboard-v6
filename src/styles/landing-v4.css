@@ -5620,9 +5620,9 @@ td:last-child { padding: 8px 10px; }
   font-family: 'JetBrains Mono', monospace;
 }
 .dsp-narrative-text {
-  font-size: 15px;
+  font-size: 12px;
   color: #334155;
-  line-height: 1.6;
+  line-height: 1.55;
   margin: 0;
 }
 
