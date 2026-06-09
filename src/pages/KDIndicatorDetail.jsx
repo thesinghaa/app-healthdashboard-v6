@@ -710,9 +710,22 @@ export default function KDIndicatorDetail({ indicator, program, division, onBack
             <div className="ncd-card">
               <div className="ncd-card-header">
                 <h3>District Performance Map</h3>
-                <span className="ncd-card-note">
-                  {years.at(-1)} cumulative · {distData.length} districts reporting · Click district to compare
-                </span>
+                <div className="kdi-hdr-right">
+                  <span className="ncd-card-note">
+                    {years.at(-1)} cumulative · {distData.length} districts reporting · Click district to compare
+                  </span>
+                  {distData.length > 0 && (
+                    <button className="kdi-hdr-dl-btn" style={{ background: divColor }}
+                      onClick={() => {
+                        const csv = [['District', `Value (FY ${years.at(-1)})`], ...distData.map(d => [d.district, d.value])].map(r => r.join(',')).join('\n');
+                        const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: `district_performance_FY${years.at(-1)}.csv` });
+                        a.click();
+                      }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Download
+                    </button>
+                  )}
+                </div>
               </div>
 
               {hmisLoading && (
@@ -827,9 +840,23 @@ export default function KDIndicatorDetail({ indicator, program, division, onBack
             <div className="ncd-card">
               <div className="ncd-card-header">
                 <h3>Monthly Trends</h3>
-                <span className="ncd-card-note">
-                  HMIS Code {indicator.hmisCode} · State total · All districts combined
-                </span>
+                <div className="kdi-hdr-right">
+                  <span className="ncd-card-note">
+                    HMIS Code {indicator.hmisCode} · State total · All districts combined
+                  </span>
+                  {trendData.length > 0 && (
+                    <button className="kdi-hdr-dl-btn" style={{ background: divColor }}
+                      onClick={() => {
+                        const hdrs = ['Month', ...years];
+                        const csv = [hdrs, ...trendData.map(r => [r.month, ...years.map(yr => r[yr] ?? 0)])].map(r => r.join(',')).join('\n');
+                        const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: `monthly_trends_${indicator.hmisCode}.csv` });
+                        a.click();
+                      }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Download
+                    </button>
+                  )}
+                </div>
               </div>
 
               {hmisLoading && (
@@ -896,9 +923,25 @@ export default function KDIndicatorDetail({ indicator, program, division, onBack
             <div className="ncd-card">
               <div className="ncd-card-header">
                 <h3>District Comparison</h3>
-                <span className="ncd-card-note">
-                  Select two districts — use dropdown or click on the map
-                </span>
+                <div className="kdi-hdr-right">
+                  <span className="ncd-card-note">Select two districts — use dropdown or click on the map</span>
+                  <button className="kdi-hdr-ai-btn" style={{ '--btn-c': divColor }} disabled>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    AI Report
+                  </button>
+                  {distData.length > 0 && (
+                    <button className="kdi-hdr-dl-btn" style={{ background: divColor }}
+                      onClick={() => {
+                        const sorted = [...distData].sort((a, b) => b.value - a.value);
+                        const csv = [['Rank', 'District', `Value (FY ${years.at(-1)})`], ...sorted.map((d, i) => [i + 1, d.district, d.value])].map(r => r.join(',')).join('\n');
+                        const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: `district_comparison_FY${years.at(-1)}.csv` });
+                        a.click();
+                      }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Download Data
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="kdi-compare-grid">
@@ -960,25 +1003,15 @@ export default function KDIndicatorDetail({ indicator, program, division, onBack
                         <span className="kdi-hvh-title">{compDistA} vs {compDistB}</span>
                         <span className="kdi-hvh-sub">Monthly performance comparison</span>
                       </div>
-                      <div className="kdi-hvh-actions">
-                        <select
-                          className="kdi-hvh-year-sel"
-                          value={selYear}
-                          onChange={e => setCompYear(e.target.value)}
-                        >
-                          {availYears.map(yr => (
-                            <option key={yr} value={yr}>FY {yr}-{String(Number(yr)+1).slice(2)}</option>
-                          ))}
-                        </select>
-                        <button className="kdi-hvh-btn kdi-hvh-btn--ai" style={{ '--btn-c': divColor }} disabled>
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                          AI Report
-                        </button>
-                        <button className="kdi-hvh-btn kdi-hvh-btn--dl" onClick={handleDataDownload}>
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                          Download Data
-                        </button>
-                      </div>
+                      <select
+                        className="kdi-hvh-year-sel"
+                        value={selYear}
+                        onChange={e => setCompYear(e.target.value)}
+                      >
+                        {availYears.map(yr => (
+                          <option key={yr} value={yr}>FY {yr}-{String(Number(yr)+1).slice(2)}</option>
+                        ))}
+                      </select>
                     </div>
                     <ResponsiveContainer width="100%" height={200}>
                       <LineChart data={hvhData} margin={{ top: 8, right: 24, left: 0, bottom: 4 }}>

@@ -7364,3 +7364,49 @@ h1, h2, h3, h4 {
   color: #475569;
 }
 .kdi-hvh-btn--dl:hover { background: #F1F5F9; border-color: #94A3B8; }
+
+/* ── Section header right group (note + buttons) ───────────────────── */
+.kdi-hdr-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+/* Blue filled download button */
+.kdi-hdr-dl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s, transform 0.12s;
+  flex-shrink: 0;
+}
+.kdi-hdr-dl-btn:hover  { opacity: 0.88; }
+.kdi-hdr-dl-btn:active { transform: scale(0.97); }
+/* AI Report ghost button */
+.kdi-hdr-ai-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 13px;
+  background: color-mix(in srgb, var(--btn-c, #1B6FF5) 10%, #fff);
+  border: 1.5px solid color-mix(in srgb, var(--btn-c, #1B6FF5) 35%, transparent);
+  border-radius: 8px;
+  color: var(--btn-c, #1B6FF5);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: default;
+  white-space: nowrap;
+  opacity: 0.72;
+  flex-shrink: 0;
+}
