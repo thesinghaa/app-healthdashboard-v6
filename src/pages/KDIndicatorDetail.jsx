@@ -637,7 +637,6 @@ export default function KDIndicatorDetail({ indicator, program, division, onBack
                 KD #{indicator?.no}
               </span>
               {indicator?.type && <span className="kdi-type-pill">{indicator.type}</span>}
-              {indicator?.hmisCode && <span className="kdi-hmis-tag">HMIS {indicator.hmisCode}</span>}
             </div>
             <div className="kdi-name">{indicator?.indicator}</div>
             {indicator?.statement && <div className="kdi-statement">{indicator.statement}</div>}
@@ -842,7 +841,7 @@ export default function KDIndicatorDetail({ indicator, program, division, onBack
                 <h3>Monthly Trends</h3>
                 <div className="kdi-hdr-right">
                   <span className="ncd-card-note">
-                    HMIS Code {indicator.hmisCode} · State total · All districts combined
+                    State total · All districts combined
                   </span>
                   {trendData.length > 0 && (
                     <button className="kdi-hdr-dl-btn" style={{ background: divColor }}
