@@ -29,8 +29,8 @@
   --v4-accent:     #0099FF;
   --v4-accent-dim: rgba(0,153,255,0.14);
 
-  --v4-gold:       #C8952A;
-  --v4-gold-dim:   rgba(200,149,42,0.18);
+  --v4-gold:       #7C4B1E;
+  --v4-gold-dim:   rgba(124,75,30,0.18);
 }
 
 [data-theme="light"] {
@@ -261,7 +261,7 @@
   gap: 8px;
   padding: 6px 18px;
   background: var(--v4-gold-dim);
-  border: 1px solid rgba(200,149,42,0.32);
+  border: 1px solid rgba(124,75,30,0.32);
   border-radius: 100px;
   font-size: 10.5px;
   font-weight: 700;
@@ -5010,10 +5010,10 @@ td:last-child { padding: 8px 10px; }
   text-align: center;
   color: #1A1A1A;
   background: #ffffff;
-  border: 2px solid #C9821A;
+  border: 2px solid #7C4B1E;
   padding: 9px 20px;
   border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(201, 130, 26, 0.18);
+  box-shadow: 0 2px 8px rgba(124,75,30,0.18);
   box-sizing: border-box;
 }
 
