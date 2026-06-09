@@ -594,8 +594,9 @@ export default function KDIndicatorDetail({ indicator, program, division, onBack
     return () => ctx.revert();
   }, [indicator?.no]);
 
-  const scale = DIVISION_SCALES[divId] || DIVISION_SCALES.rch;
-  const YEAR_COLORS = [scale[3][1], scale[2][1], scale[1][1]];
+  // Fixed 3-year palette: slate (oldest) → emerald (mid) → orange (current)
+  // Avoids same-hue confusion from division scales
+  const YEAR_COLORS = ['#94A3B8', '#10B981', '#F97316'];
 
   return (
     <div className="ncd-root" ref={wrapRef} style={{ '--dc': divColor }}>
@@ -864,7 +865,7 @@ export default function KDIndicatorDetail({ indicator, program, division, onBack
                         type="monotone" dataKey={yr} name={yr}
                         stroke={YEAR_COLORS[i % 3]}
                         fill={`url(#kdi-grad-${yr})`}
-                        strokeWidth={2}
+                        strokeWidth={i === years.length - 1 ? 2.5 : 1.8}
                         dot={false}
                       />
                     ))}
