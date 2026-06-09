@@ -12,7 +12,7 @@ import apDistricts from '../data/apDistricts.json';
 import {
   LineChart, Line,
   AreaChart, Area,
-  XAxis, YAxis, CartesianGrid, Tooltip,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer,
 } from 'recharts';
 
@@ -492,6 +492,7 @@ export default function KDIndicatorDetail({ indicator, program, division, onBack
   const [hmisLoading, setHmisLoading] = useState(false);
   const [compDistA,   setCompDistA]   = useState(null);
   const [compDistB,   setCompDistB]   = useState(null);
+  const [compYear,    setCompYear]    = useState('2025');
 
   const { theme } = useTheme();
   const isLight   = theme === 'light';
@@ -922,6 +923,56 @@ export default function KDIndicatorDetail({ indicator, program, division, onBack
                   divId={divId}
                 />
               </div>
+
+              {/* Head-to-head comparison chart */}
+              {compDistA && compDistB && rawRows?.length > 0 && (() => {
+                const availYears = [...new Set(rawRows.map(r => String(r.year)))].sort();
+                const selYear = availYears.includes(compYear) ? compYear : availYears.at(-1);
+                const monthMap = {};
+                rawRows.forEach(r => {
+                  if (String(r.year) !== selYear) return;
+                  const moIdx = MONTH_ORDER.findIndex(m => m.toLowerCase() === r.month.toLowerCase());
+                  const moKey = moIdx >= 0 ? MONTH_SHORT[moIdx] : r.month.slice(0, 3);
+                  if (!monthMap[moKey]) monthMap[moKey] = { a: 0, b: 0 };
+                  monthMap[moKey].a += (r.distTotals[compDistA] ?? 0);
+                  monthMap[moKey].b += (r.distTotals[compDistB] ?? 0);
+                });
+                const hvhData = MONTH_SHORT
+                  .map(mo => ({ month: mo, [compDistA]: monthMap[mo]?.a ?? 0, [compDistB]: monthMap[mo]?.b ?? 0 }))
+                  .filter(row => row[compDistA] > 0 || row[compDistB] > 0);
+                if (!hvhData.length) return null;
+                return (
+                  <div className="kdi-hvh-wrap">
+                    <div className="kdi-hvh-header">
+                      <div>
+                        <span className="kdi-hvh-title">{compDistA} vs {compDistB}</span>
+                        <span className="kdi-hvh-sub">Monthly performance comparison</span>
+                      </div>
+                      <select
+                        className="kdi-hvh-year-sel"
+                        value={selYear}
+                        onChange={e => setCompYear(e.target.value)}
+                      >
+                        {availYears.map(yr => (
+                          <option key={yr} value={yr}>FY {yr}-{String(Number(yr)+1).slice(2)}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <ResponsiveContainer width="100%" height={200}>
+                      <LineChart data={hvhData} margin={{ top: 8, right: 24, left: 0, bottom: 4 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                        <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94A3B8' }} />
+                        <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} tickFormatter={fmt} />
+                        <Tooltip content={<ChartTip />} />
+                        <Legend wrapperStyle={{ fontSize: 12 }} />
+                        <Line type="monotone" dataKey={compDistA} stroke={divColor} strokeWidth={2.5} dot={false} />
+                        <Line type="monotone" dataKey={compDistB} stroke="#F97316" strokeWidth={2.5} dot={false} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                );
+              })()}
+
             </div>
           </div>
           </>

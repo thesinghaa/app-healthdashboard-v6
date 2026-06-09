@@ -7287,3 +7287,47 @@ h1, h2, h3, h4 {
   background: var(--rpt-accent, #FF5500);
   box-shadow: 0 0 6px var(--rpt-accent, #FF5500);
 }
+
+/* ── Head-to-head district comparison chart ────────────────────────── */
+.kdi-hvh-wrap {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #E2E8F0;
+}
+.kdi-hvh-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.kdi-hvh-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1E293B;
+  font-family: 'Inter', sans-serif;
+}
+.kdi-hvh-sub {
+  display: block;
+  font-size: 12px;
+  color: #94A3B8;
+  margin-top: 2px;
+  font-family: 'Inter', sans-serif;
+}
+.kdi-hvh-year-sel {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  color: #334155;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+}
+.kdi-hvh-year-sel:focus {
+  border-color: var(--dc, #1B6FF5);
+}
