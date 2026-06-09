@@ -173,7 +173,9 @@ Status colors: gap `#FF3B5C` · close `#FFB020` · ok `#00C97A`
 
 `ReportModal.jsx` → `api/report/[divisionId].js` — 3 Groq calls:  
 1. `llama-3.1-8b-instant` DataCollector → 2. `llama-3.3-70b` Analyst → 3. `llama-3.3-70b` ReportWriter  
-Groq keys in Vercel env (`GROQ_API_KEY` + 4 fallbacks in `.env`).
+Groq keys in Vercel env: `GROQ_API_KEY` (primary) + `GROQ_API_KEY_2` (fallback).  
+`groqCall()` takes array of keys, auto-retries next key on 429/401/403/500/502/503. Never hardcode keys in source.  
+Terminology: "Indicators Tracked" (not "KDs Tracked") everywhere in report HTML.
 
 ---
 
@@ -190,6 +192,45 @@ Projection: `{ center: [94.483, 28.056], scale: 2780 }` (landing map) / `{ cente
 - Stories for NDCP, NCD, HSS, HRH divisions
 - District sex-ratio map (Story 2) — awaiting data
 - Family planning method-mix chart (Story 5) — awaiting data
+
+---
+
+## Back Navigation Architecture (App.jsx)
+
+**Rule**: "remember without re-render" → `useRef`; "trigger effect at specific moment" → `useState`.
+
+- `wheelReturnRef` (`useRef`) — stores `{ divId, progId }` when navigating wheel→indicator. Setting a ref does NOT re-render, so LandingPage's `reopenWheel` effect does NOT fire prematurely.
+- `reopenSignal` (`useState`) — set ONLY inside `goBack()`. LandingPage watches this → opens wheel + pre-selects programme.
+- Bug pattern: `wheelReturn` as state caused re-render on `goToKDDirect` → LandingPage's effect fired immediately → cleared state → Back had nothing to reopen.
+- Login state hoisted to `App.jsx` (`isLoggedIn`, `loggedInUser`). LandingPage gets them as props. Prevents reset on unmount when navigating away.
+
+```
+goToKDDirect → wheelReturnRef.current = {divId, progId}  (silent)
+goBack → reads wheelReturnRef → calls reopenWheelNow()
+reopenWheelNow → setReopenSignal(ref value) + transitionTo(home)
+LandingPage → useEffect[reopenWheel] → setWheelProgTarget → opens wheel+panel
+```
+
+---
+
+## GSAP Pre-Selected Mount Fix (ProgrammeWheelPage)
+
+When reopening wheel with a pre-selected programme:
+- `mountPreSelectedRef` — set true on mount if `initialProgId` exists. Entry animation skipped; layout set instantly via `gsap.set()`.
+- `skipNextSelectAnimRef` — set true on mount if `initialProgId` exists. First select-effect run (selected=null → selected=prog) skips animation entirely. Both refs cleared after first use.
+- **Bug**: entry animation faded cards IN. Select effect's null→prog branch was a no-op but the entry animation conflicted. Fix: skip both.
+
+---
+
+## DivisionStoryPage — Charts (June 2026)
+
+Both charts rendered in `.dsp-story-right`, stacked vertically with `2px solid #1B6FF5` divider:
+1. **Horizontal funnel** (Plotly `orientation:'h'`) — solid `division.color` fill, white text, `(X%)` format
+2. **Vertical lollipop** (Plotly scatter+bar) — actual vs target; `tickangle:0`; labels >18 chars wrapped with `<br>`; height 260px; left margin 48px
+
+`.dsp-story-narrative`: `flex: 0 0 auto` (not `flex:1`) — only takes needed height.  
+`.dsp-story-grid`: `align-items: start`. `.dsp-story-left`: `align-self: start`.  
+"View All Indicators" button removed from wheel panel.
 
 ---
 
