@@ -922,6 +922,20 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
                     />
                   </Suspense>
                 </div>
+                <div className="dsp-bar-legend">
+                  <span className="dsp-bar-legend-item">
+                    <span className="dsp-bar-legend-dot" style={{ background: division.color }} />
+                    On Track <span className="dsp-bar-legend-sub">(within 5pp of target)</span>
+                  </span>
+                  <span className="dsp-bar-legend-item">
+                    <span className="dsp-bar-legend-dot" style={{ background: '#F59E0B' }} />
+                    Caution <span className="dsp-bar-legend-sub">(6–15pp gap)</span>
+                  </span>
+                  <span className="dsp-bar-legend-item">
+                    <span className="dsp-bar-legend-dot" style={{ background: '#EF4444' }} />
+                    Needs Attention <span className="dsp-bar-legend-sub">(&gt;15pp gap)</span>
+                  </span>
+                </div>
                 {st.barNote && <p className="dsp-bar-note">{st.barNote}</p>}
               </div>
 

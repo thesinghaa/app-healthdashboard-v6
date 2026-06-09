@@ -6853,3 +6853,32 @@ td:last-child { padding: 8px 10px; }
   padding: 6px 48px 0;
   background: #fff;
 }
+
+/* ── Story bar chart colour legend ──────────────────────────────────── */
+.dsp-bar-legend {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 8px 4px 0;
+}
+.dsp-bar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  font-family: 'Inter', sans-serif;
+}
+.dsp-bar-legend-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.dsp-bar-legend-sub {
+  font-weight: 400;
+  color: #94A3B8;
+  font-size: 11px;
+}
