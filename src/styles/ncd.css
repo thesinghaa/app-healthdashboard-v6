@@ -7331,3 +7331,36 @@ h1, h2, h3, h4 {
 .kdi-hvh-year-sel:focus {
   border-color: var(--dc, #1B6FF5);
 }
+
+.kdi-hvh-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.kdi-hvh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 13px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s, transform 0.12s;
+}
+.kdi-hvh-btn:active { transform: scale(0.97); }
+.kdi-hvh-btn--ai {
+  background: color-mix(in srgb, var(--btn-c, #1B6FF5) 10%, #fff);
+  border: 1.5px solid color-mix(in srgb, var(--btn-c, #1B6FF5) 40%, transparent);
+  color: var(--btn-c, #1B6FF5);
+  opacity: 0.75;
+}
+.kdi-hvh-btn--dl {
+  background: #F8FAFC;
+  border: 1.5px solid #CBD5E1;
+  color: #475569;
+}
+.kdi-hvh-btn--dl:hover { background: #F1F5F9; border-color: #94A3B8; }
