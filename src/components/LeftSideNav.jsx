@@ -714,7 +714,7 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
     <div className="dsp-page" ref={pageRef} style={{ '--dc': division.color, '--dl': division.light }}>
       {/* ── Header ── */}
       <header className="dsp-header">
-        <button className="wpg-back-btn" onClick={onLogout || close}>
+        <button className="wpg-back-btn" onClick={close}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <path d="M19 12H5M12 5l-7 7 7 7"/>
           </svg>
@@ -724,7 +724,7 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
           <span className="wpg-header-chip">{division.short}</span>
           <h1 className="wpg-header-title">{division.name}</h1>
         </div>
-        <button className="wpg-close-btn" onClick={onLogout || close} aria-label="Close">
+        <button className="wpg-close-btn" onClick={close} aria-label="Close">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
@@ -961,7 +961,7 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
 }
 
 /* ── Left Nav panel ───────────────────────────────────────────────────────── */
-export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openWheelDirect, openDivDirect, reopenWheelWithProg, onReopenWheelWithProgDone, onNeedLogin, onDirectKD, isLoggedIn, loggedInUser, onLogout, onReport }) {
+export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openWheelDirect, openDivDirect, onOpenDivDone, reopenWheelWithProg, onReopenWheelWithProgDone, onNeedLogin, onDirectKD, isLoggedIn, loggedInUser, onLogout, onReport }) {
   const [open,      setOpen]      = useState(false);
   const [activeDiv, setActiveDiv] = useState(null);
   const [showWheel, setShowWheel] = useState(false);
@@ -991,6 +991,7 @@ export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openW
     if (!openDivDirect) return;
     const div = DIVISIONS.find(d => d.id === openDivDirect);
     if (div) { setActiveDiv(div); setShowWheel(false); }
+    if (onOpenDivDone) onOpenDivDone();
   }, [openDivDirect]);
 
   const panelRef = useRef(null);
@@ -1055,7 +1056,7 @@ export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openW
           onInitialProgConsumed={() => setWheelInitialProg(null)}
           onLogin={() => onNeedLogin && onNeedLogin(null)}
           onClose={() => { setActiveDiv(null); setShowWheel(false); }}
-          onBack={() => setShowWheel(false)}
+          onBack={() => { if (DIVISION_STORIES[activeDiv.id]) { setShowWheel(false); } else { setActiveDiv(null); setShowWheel(false); } }}
           onLogout={onLogout ? () => { setActiveDiv(null); setShowWheel(false); onLogout(); } : null}
           onReport={onReport ? () => onReport(activeDiv.id, activeDiv.name, activeDiv.color) : null}
         />

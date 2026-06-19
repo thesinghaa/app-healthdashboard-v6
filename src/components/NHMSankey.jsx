@@ -261,7 +261,6 @@ export default function NHMSankey({ onSelectDivision, onSelectProgramme, theme =
           }}
           nodeTooltip={NodeTooltip}
           linkTooltip={LinkTooltip}
-          onClick={handleNodeClick}
           onMouseEnter={(node) => {
             let abbr = null;
             if (node.group === 'nhm') {

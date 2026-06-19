@@ -848,6 +848,7 @@ export default function LandingPage({ onSelectDivision, onViewSummary, onDirectK
       <LeftSideNav onSelectDivision={onSelectDivision} onSelectProgramme={onSelectProgrammeFromWheel || onSelectProgramme}
         openWheelDirect={wheelTarget}
         openDivDirect={divPillTarget}
+        onOpenDivDone={() => setDivPillTarget(null)}
         reopenWheelWithProg={wheelProgTarget}
         onReopenWheelWithProgDone={() => setWheelProgTarget(null)}
         onNeedLogin={handleNeedLogin}
