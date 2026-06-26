@@ -2611,12 +2611,13 @@
   position: relative;
   overflow: hidden;
   min-height: 220px;
-  cursor: pointer;
+  cursor: default;
+  pointer-events: none;
   transition: box-shadow 0.18s ease, transform 0.18s ease;
 }
 .v5-stat-card:hover {
-  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-  transform: translateY(-2px);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05);
+  transform: none;
 }
 .v5-stat-card::before {
   content: '';

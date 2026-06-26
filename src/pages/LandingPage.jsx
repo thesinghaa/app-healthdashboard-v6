@@ -933,13 +933,6 @@ export default function LandingPage({ onSelectDivision, onViewSummary, onDirectK
               key={div.id}
               className="v5-stat-card"
               style={{ '--accent': accent }}
-              onClick={() => {
-                if (onDirectKD && face0?.kd) {
-                  onDirectKD(div, face0.progId, face0.kd);
-                } else {
-                  onSelectDivision(div);
-                }
-              }}
             >
               <img src={`/statcards/${div.label}.png`} className="v5-stat-card-img" alt="" />
               <div className="v5-stat-number">{face0?.value ?? '—'}</div>
