@@ -971,12 +971,13 @@ export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openW
   const [activeDiv, setActiveDiv] = useState(null);
   const [showWheel, setShowWheel] = useState(false);
   const [wheelInitialProg, setWheelInitialProg] = useState(null); // progId to pre-select
+  const cameViaStoryRef = useRef(false); // true only when user clicked "Explore More" from story page
 
-  // Called from Login popup to skip story and go straight to wheel
+  // Called from Login popup — skip story, go straight to wheel
   useEffect(() => {
     if (!openWheelDirect) return;
     const div = DIVISIONS.find(d => d.id === openWheelDirect);
-    if (div) { setActiveDiv(div); setShowWheel(true); }
+    if (div) { cameViaStoryRef.current = false; setActiveDiv(div); setShowWheel(true); }
   }, [openWheelDirect]);
 
   // Back from KD indicator — reopen wheel with programme pre-selected
@@ -991,11 +992,11 @@ export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openW
     if (onReopenWheelWithProgDone) onReopenWheelWithProgDone();
   }, [reopenWheelWithProg]);
 
-  // Called from landing page division pills — mirrors row click (story first for RCH, wheel for others)
+  // Called from landing page division pills — show story first (or wheel for divs without story)
   useEffect(() => {
     if (!openDivDirect) return;
     const div = DIVISIONS.find(d => d.id === openDivDirect);
-    if (div) { setActiveDiv(div); setShowWheel(false); }
+    if (div) { cameViaStoryRef.current = false; setActiveDiv(div); setShowWheel(false); }
     if (onOpenDivDone) onOpenDivDone();
   }, [openDivDirect]);
 
@@ -1044,7 +1045,7 @@ export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openW
         <DivisionStoryPage
           division={activeDiv}
           onClose={() => setActiveDiv(null)}
-          onExploreProgrammes={() => setShowWheel(true)}
+          onExploreProgrammes={() => { cameViaStoryRef.current = true; setShowWheel(true); }}
           onLogout={onLogout ? () => { setActiveDiv(null); setShowWheel(false); onLogout(); } : null}
         />
       )}
@@ -1061,7 +1062,7 @@ export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openW
           onInitialProgConsumed={() => setWheelInitialProg(null)}
           onLogin={() => onNeedLogin && onNeedLogin(null)}
           onClose={() => { setActiveDiv(null); setShowWheel(false); }}
-          onBack={() => { if (DIVISION_STORIES[activeDiv.id]) { setShowWheel(false); } else { setActiveDiv(null); setShowWheel(false); } }}
+          onBack={() => { if (cameViaStoryRef.current && DIVISION_STORIES[activeDiv.id]) { cameViaStoryRef.current = false; setShowWheel(false); } else { setActiveDiv(null); setShowWheel(false); } }}
           onLogout={onLogout ? () => { setActiveDiv(null); setShowWheel(false); onLogout(); } : null}
           onReport={onReport && KD_TREE[activeDiv.id] ? () => onReport(activeDiv.id, activeDiv.name, activeDiv.color) : null}
         />
