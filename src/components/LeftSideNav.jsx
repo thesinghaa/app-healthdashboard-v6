@@ -373,7 +373,7 @@ function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedI
           </button>
         )}
         <span className="wpg-prog-count">{n} Programmes</span>
-        <button className="wpg-close-btn" onClick={onLogout || close} aria-label="Close">
+        <button className="wpg-close-btn" onClick={close} aria-label="Close">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
@@ -1058,7 +1058,7 @@ export default function LeftSideNav({ onSelectDivision, onSelectProgramme, openW
           onClose={() => { setActiveDiv(null); setShowWheel(false); }}
           onBack={() => { if (DIVISION_STORIES[activeDiv.id]) { setShowWheel(false); } else { setActiveDiv(null); setShowWheel(false); } }}
           onLogout={onLogout ? () => { setActiveDiv(null); setShowWheel(false); onLogout(); } : null}
-          onReport={onReport ? () => onReport(activeDiv.id, activeDiv.name, activeDiv.color) : null}
+          onReport={onReport && KD_TREE[activeDiv.id] ? () => onReport(activeDiv.id, activeDiv.name, activeDiv.color) : null}
         />
       )}
     </>
