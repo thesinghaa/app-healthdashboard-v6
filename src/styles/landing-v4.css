@@ -4629,8 +4629,8 @@ td:last-child { padding: 8px 10px; }
   transition: background 0.15s, transform 0.15s;
 }
 .wpg-close-btn:hover { background: #DC2626; transform: scale(1.1); }
-.wpg-logout-btn {
-  width: auto;
+.wpg-close-btn.wpg-logout-btn {
+  width: auto !important;
   height: 32px;
   border-radius: 8px;
   padding: 0 12px;
@@ -4639,8 +4639,11 @@ td:last-child { padding: 8px 10px; }
   font-weight: 600;
   font-family: Inter, sans-serif;
   letter-spacing: 0.01em;
+  background: #F1F5F9;
+  color: #1E293B;
+  border: 1.5px solid #CBD5E1;
 }
-.wpg-logout-btn:hover { transform: none; }
+.wpg-close-btn.wpg-logout-btn:hover { background: #E2E8F0; transform: none; }
 
 /* ── Outer bordered frame ── */
 .wpg-frame {
