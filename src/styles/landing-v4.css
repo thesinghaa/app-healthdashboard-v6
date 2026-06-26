@@ -4629,6 +4629,18 @@ td:last-child { padding: 8px 10px; }
   transition: background 0.15s, transform 0.15s;
 }
 .wpg-close-btn:hover { background: #DC2626; transform: scale(1.1); }
+.wpg-logout-btn {
+  width: auto;
+  height: 32px;
+  border-radius: 8px;
+  padding: 0 12px;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: Inter, sans-serif;
+  letter-spacing: 0.01em;
+}
+.wpg-logout-btn:hover { transform: none; }
 
 /* ── Outer bordered frame ── */
 .wpg-frame {

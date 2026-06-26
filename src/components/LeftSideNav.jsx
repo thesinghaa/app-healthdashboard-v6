@@ -373,10 +373,13 @@ function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedI
           </button>
         )}
         <span className="wpg-prog-count">{n} Programmes</span>
-        <button className="wpg-close-btn" onClick={close} aria-label="Close">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M18 6L6 18M6 6l12 12"/>
+        <button className="wpg-close-btn wpg-logout-btn" onClick={onLogout || close} aria-label="Logout">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
           </svg>
+          Logout
         </button>
       </div>
 
@@ -455,8 +458,7 @@ function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedI
             {/* Centre badge — white bg so image blends naturally */}
             <circle r={I_R - 6} fill={division.light}
               stroke={division.color} strokeWidth="3"
-              style={{ cursor: 'pointer' }}
-              onClick={() => { close(); setTimeout(() => onSelect(null, divData), 220); }}
+              style={{ cursor: 'default', pointerEvents: 'none' }}
             />
             <image href={`/sidebar/${division.short}.png`}
               x={-(I_R-6)*0.62} y={-(I_R-6)*0.78}
@@ -576,7 +578,7 @@ function ProgrammeWheelPage({ division, divData, onSelect, onSelectKD, isLoggedI
 
       {/* ── Footer ── */}
       <footer className="wpg-footer" ref={footerRef}>
-        Click a wheel segment to view Key Deliverables &nbsp;·&nbsp; Click the centre to explore the full division
+        Click a wheel segment to view Key Deliverables
       </footer>
     </div>
   );
@@ -724,10 +726,13 @@ function DivisionStoryPage({ division, onClose, onExploreProgrammes, onLogout })
           <span className="wpg-header-chip">{division.short}</span>
           <h1 className="wpg-header-title">{division.name}</h1>
         </div>
-        <button className="wpg-close-btn" onClick={close} aria-label="Close">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M18 6L6 18M6 6l12 12"/>
+        <button className="wpg-close-btn wpg-logout-btn" onClick={onLogout || close} aria-label="Logout">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
           </svg>
+          Logout
         </button>
       </header>
 
